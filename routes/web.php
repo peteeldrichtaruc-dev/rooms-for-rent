@@ -5,6 +5,7 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,6 +46,11 @@ Route::middleware('auth')->group(function () {
 
     // Tenants
     Route::resource('tenants', TenantController::class);
+
+    // Invoices
+    Route::resource('invoices', InvoiceController::class);
+    Route::patch('invoices/{invoice}/mark-as-paid', [InvoiceController::class, 'markAsPaid'])
+        ->name('invoices.mark-as-paid');
 });
 
 require __DIR__ . '/auth.php';

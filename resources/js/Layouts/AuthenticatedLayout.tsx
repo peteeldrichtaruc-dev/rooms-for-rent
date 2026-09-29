@@ -114,8 +114,8 @@ export default function AuthenticatedLayout({
             ),
         },
         {
-            name: "Billing & Invoices",
-            href: "#",
+            name: "Invoices",
+            href: route("invoices.index"),
             active: route().current("invoices.*"),
             icon: (
                 <svg
