@@ -1,4 +1,4 @@
-import axios, { AxiosStatic } from 'axios';
+import axios, { AxiosStatic } from "axios";
 
 window.axios = axios;
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";

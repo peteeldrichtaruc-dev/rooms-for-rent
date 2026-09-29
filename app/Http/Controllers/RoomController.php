@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoomRequest;
+use App\Http\Requests\UpdateRoomRequest;
 use App\Models\Room;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,9 @@ class RoomController extends Controller
 {
     /**
      * Display a listing of rooms across user properties.
+     *
+     * @param Request $request
+     * @return Response
      */
     public function index(Request $request): Response
     {
@@ -29,6 +33,9 @@ class RoomController extends Controller
 
     /**
      * Show the form for creating a new room.
+     *
+     * @param Request $request
+     * @return Response
      */
     public function create(Request $request): Response
     {
@@ -42,6 +49,9 @@ class RoomController extends Controller
 
     /**
      * Store a newly created room in storage.
+     *
+     * @param StoreRoomRequest $request
+     * @return RedirectResponse
      */
     public function store(StoreRoomRequest $request): RedirectResponse
     {
@@ -53,6 +63,9 @@ class RoomController extends Controller
 
     /**
      * Display the specified room.
+     *
+     * @param Room $room
+     * @return Response
      */
     public function show(Room $room): Response
     {
@@ -67,6 +80,10 @@ class RoomController extends Controller
 
     /**
      * Show the form for editing the specified room.
+     *
+     * @param Request $request
+     * @param Room $room
+     * @return Response
      */
     public function edit(Request $request, Room $room): Response
     {
@@ -82,8 +99,12 @@ class RoomController extends Controller
 
     /**
      * Update the specified room in storage.
+     *
+     * @param UpdateRoomRequest $request
+     * @param Room $room
+     * @return RedirectResponse
      */
-    public function update(StoreRoomRequest $request, Room $room): RedirectResponse
+    public function update(UpdateRoomRequest $request, Room $room): RedirectResponse
     {
         $this->authorize('update', $room);
 
@@ -95,6 +116,9 @@ class RoomController extends Controller
 
     /**
      * Remove the specified room from storage.
+     *
+     * @param Room $room
+     * @return RedirectResponse
      */
     public function destroy(Room $room): RedirectResponse
     {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Property;
 use App\Http\Requests\StorePropertyRequest;
+use App\Http\Requests\UpdatePropertyRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -115,11 +116,11 @@ class PropertyController extends Controller
     /**
      * Update the specified property in storage.
      *
-     * @param StorePropertyRequest $request
+     * @param UpdatePropertyRequest $request
      * @param Property $property
      * @return RedirectResponse
      */
-    public function update(StorePropertyRequest $request, Property $property): RedirectResponse
+    public function update(UpdatePropertyRequest $request, Property $property): RedirectResponse
     {
         $this->authorize('update', $property);
 

@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\LeaseController;
+use App\Http\Controllers\TenantController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,6 +39,12 @@ Route::middleware('auth')->group(function () {
 
     // Rooms
     Route::resource('rooms', RoomController::class);
+
+    // Leases
+    Route::resource('leases', LeaseController::class);
+
+    // Tenants
+    Route::resource('tenants', TenantController::class);
 });
 
 require __DIR__ . '/auth.php';

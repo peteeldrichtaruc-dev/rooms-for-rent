@@ -1,32 +1,32 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { Link, InertiaLinkProps } from '@inertiajs/react';
+import { ButtonHTMLAttributes, ReactNode } from "react";
+import { Link, InertiaLinkProps } from "@inertiajs/react";
 
 export interface PrimaryButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     isLoading?: boolean;
-    size?: 'sm' | 'md' | 'lg';
+    size?: "sm" | "md" | "lg";
     leftIcon?: ReactNode;
     rightIcon?: ReactNode;
     href?: string;
-    inertiaProps?: Omit<InertiaLinkProps, 'href' | 'children'>;
+    inertiaProps?: Omit<InertiaLinkProps, "href" | "children">;
 }
 
 export default function PrimaryButton({
     children,
-    className = '',
+    className = "",
     disabled = false,
     isLoading = false,
-    size = 'md',
+    size = "md",
     leftIcon,
     rightIcon,
     href,
     inertiaProps,
-    type = 'submit',
+    type = "submit",
     ...props
 }: PrimaryButtonProps) {
     const sizeClasses = {
-        sm: 'px-3 py-1.5 text-xs rounded-lg gap-1.5',
-        md: 'px-4 py-2.5 text-sm rounded-xl gap-2',
-        lg: 'px-6 py-3.5 text-base rounded-xl gap-2.5',
+        sm: "px-3 py-1.5 text-xs rounded-lg gap-1.5",
+        md: "px-4 py-2.5 text-sm rounded-xl gap-2",
+        lg: "px-6 py-3.5 text-base rounded-xl gap-2.5",
     };
 
     const baseClasses = `
@@ -70,18 +70,16 @@ export default function PrimaryButton({
 
             <span>{children}</span>
 
-            {!isLoading && rightIcon && <span className="shrink-0">{rightIcon}</span>}
+            {!isLoading && rightIcon && (
+                <span className="shrink-0">{rightIcon}</span>
+            )}
         </>
     );
 
     // Render as Inertia Link if href is provided
     if (href) {
         return (
-            <Link
-                href={href}
-                className={baseClasses}
-                {...inertiaProps}
-            >
+            <Link href={href} className={baseClasses} {...inertiaProps}>
                 {content}
             </Link>
         );

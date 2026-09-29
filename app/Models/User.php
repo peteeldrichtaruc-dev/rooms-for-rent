@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Class User
+ *
+ * Represents an authenticated user (landlord or property manager) who owns
+ * properties, rooms, tenants, and lease agreements.
+ *
+ * @package App\Models
+ */
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -48,7 +56,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all properties managed by the user (landlord/property manager).
+     * Get all properties managed by the user.
      *
      * @return HasMany
      */
@@ -65,5 +73,25 @@ class User extends Authenticatable
     public function rooms(): HasManyThrough
     {
         return $this->hasManyThrough(Room::class, Property::class);
+    }
+
+    /**
+     * Get all tenants managed by the user.
+     *
+     * @return HasMany
+     */
+    public function tenants(): HasMany
+    {
+        return $this->hasMany(Tenant::class);
+    }
+
+    /**
+     * Get all leases created by or belonging to the user's tenants.
+     *
+     * @return HasManyThrough
+     */
+    public function leases(): HasManyThrough
+    {
+        return $this->hasManyThrough(Lease::class, Tenant::class);
     }
 }
