@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
-import { Head, Link } from '@inertiajs/react';
+import {Head, Link} from '@inertiajs/react';
 
 interface Room {
     id: number;
@@ -22,7 +22,7 @@ interface Property {
     rooms?: Room[];
 }
 
-export default function Show({ property }: { property: Property }) {
+export default function Show({property}: { property: Property }) {
     return (
         <AuthenticatedLayout
             header={
@@ -38,14 +38,14 @@ export default function Show({ property }: { property: Property }) {
                         >
                             Edit Property
                         </Link>
-                        <PrimaryButton href="#">
+                        <PrimaryButton href={route('rooms.create')}>
                             + Add Room
                         </PrimaryButton>
                     </div>
                 </div>
             }
         >
-            <Head title={`${property.name} - RoomsForRent`} />
+            <Head title={`${property.name} - RoomsForRent`}/>
 
             <div className="space-y-8" data-aos="fade-up">
                 {/* Description Card */}
@@ -75,35 +75,38 @@ export default function Show({ property }: { property: Property }) {
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-xs text-slate-600">
-                                <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
-                                    <tr>
-                                        <th className="px-6 py-3.5">Room #</th>
-                                        <th className="px-6 py-3.5">Capacity</th>
-                                        <th className="px-6 py-3.5">Monthly Price</th>
-                                        <th className="px-6 py-3.5">Status</th>
-                                        <th className="px-6 py-3.5 text-right">Actions</th>
-                                    </tr>
+                                <thead
+                                    className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
+                                <tr>
+                                    <th className="px-6 py-3.5">Room #</th>
+                                    <th className="px-6 py-3.5">Capacity</th>
+                                    <th className="px-6 py-3.5">Monthly Price</th>
+                                    <th className="px-6 py-3.5">Status</th>
+                                    <th className="px-6 py-3.5 text-right">Actions</th>
+                                </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
-                                    {property.rooms.map((room) => (
-                                        <tr key={room.id} className="hover:bg-slate-50/50 transition">
-                                            <td className="px-6 py-4 font-bold text-slate-900">{room.room_number}</td>
-                                            <td className="px-6 py-4">{room.capacity} Person(s)</td>
-                                            <td className="px-6 py-4 font-semibold text-slate-900">₱{room.price.toLocaleString()}</td>
-                                            <td className="px-6 py-4">
-                                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${room.status === 'available' ? 'bg-emerald-50 text-emerald-700' :
+                                {property.rooms.map((room) => (
+                                    <tr key={room.id} className="hover:bg-slate-50/50 transition">
+                                        <td className="px-6 py-4 font-bold text-slate-900">{room.room_number}</td>
+                                        <td className="px-6 py-4">{room.capacity} Person(s)</td>
+                                        <td className="px-6 py-4 font-semibold text-slate-900">₱{room.price.toLocaleString()}</td>
+                                        <td className="px-6 py-4">
+                                                <span
+                                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${room.status === 'available' ? 'bg-emerald-50 text-emerald-700' :
                                                         room.status === 'occupied' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'
                                                     }`}>
                                                     {room.status}
                                                 </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <Link href="#" className="font-semibold text-blue-600 hover:text-blue-700">
-                                                    Manage
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <Link href={route('rooms.show', room.id)}
+                                                  className="font-semibold text-blue-600 hover:text-blue-700">
+                                                Manage
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
                                 </tbody>
                             </table>
                         </div>

@@ -36,7 +36,7 @@ export default function AuthenticatedLayout({
         },
         {
             name: 'Rooms & Units',
-            href: '#',
+            href: route('rooms.index'),
             active: route().current('rooms.*'),
             icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

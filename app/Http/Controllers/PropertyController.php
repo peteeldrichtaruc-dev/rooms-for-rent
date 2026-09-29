@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use App\Http\Requests\StorePropertyRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -48,20 +49,12 @@ class PropertyController extends Controller
     /**
      * Store a newly created property in storage.
      *
-     * @param Request $request
+     * @param StorePropertyRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StorePropertyRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'nullable|string|max:255',
-            'postal_code' => 'nullable|string|max:20',
-            'country' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         try {
             $property = $request->user()->properties()->create($validated);
@@ -122,23 +115,15 @@ class PropertyController extends Controller
     /**
      * Update the specified property in storage.
      *
-     * @param Request $request
+     * @param StorePropertyRequest $request
      * @param Property $property
      * @return RedirectResponse
      */
-    public function update(Request $request, Property $property): RedirectResponse
+    public function update(StorePropertyRequest $request, Property $property): RedirectResponse
     {
         $this->authorize('update', $property);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'nullable|string|max:255',
-            'postal_code' => 'nullable|string|max:20',
-            'country' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         try {
             $property->update($validated);
