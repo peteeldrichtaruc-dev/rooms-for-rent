@@ -26,7 +26,7 @@ export default function AuthenticatedLayout({
         // Navigation links ready for upcoming database models & features
         {
             name: 'Properties',
-            href: '#',
+            href: route('properties.index'),
             active: route().current('properties.*'),
             icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
