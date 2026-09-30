@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreLeaseRequest;
+use App\Http\Requests\UpdateLeaseRequest;
 use App\Models\Lease;
 use App\Models\Room;
-use App\Models\User;
+use App\Models\Tenant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,9 @@ class LeaseController extends Controller
 {
     /**
      * Display a listing of leases across landlord properties.
+     *
+     * @param Request $request
+     * @return Response
      */
     public function index(Request $request): Response
     {
@@ -33,6 +37,9 @@ class LeaseController extends Controller
 
     /**
      * Show the form for creating a new lease agreement.
+     *
+     * @param Request $request
+     * @return Response
      */
     public function create(Request $request): Response
     {
@@ -44,7 +51,9 @@ class LeaseController extends Controller
             ->get();
 
         // Select all registered users (acting as potential tenants)
-        $tenants = User::select('id', 'name', 'email')->get();
+        $tenants = Tenant::where('user_id', $request->user()->id)
+            ->select('id', 'first_name', 'last_name', 'email')
+            ->get();
 
         return Inertia::render('Leases/Create', [
             'rooms' => $rooms,
@@ -55,6 +64,10 @@ class LeaseController extends Controller
 
     /**
      * Store a new lease and update the room's status to 'occupied'.
+     *
+     * @param StoreLeaseRequest $request
+     * @return RedirectResponse
+     * @throws \Throwable
      */
     public function store(StoreLeaseRequest $request): RedirectResponse
     {
@@ -84,6 +97,10 @@ class LeaseController extends Controller
 
     /**
      * Show the form for editing an existing lease.
+     *
+     * @param Request $request
+     * @param Lease $lease
+     * @return Response
      */
     public function edit(Request $request, Lease $lease): Response
     {
@@ -93,7 +110,9 @@ class LeaseController extends Controller
             $query->where('user_id', $request->user()->id);
         })->with('property:id,name')->get();
 
-        $tenants = User::select('id', 'name', 'email')->get();
+        $tenants = Tenant::where('user_id', $request->user()->id)
+            ->select('id', 'first_name', 'last_name', 'email')
+            ->get();
 
         return Inertia::render('Leases/Edit', [
             'lease' => $lease->load(['room', 'tenant']),
@@ -104,8 +123,13 @@ class LeaseController extends Controller
 
     /**
      * Update the lease and sync room status accordingly.
+     *
+     * @param UpdateLeaseRequest $request
+     * @param Lease $lease
+     * @return RedirectResponse
+     * @throws \Throwable
      */
-    public function update(StoreLeaseRequest $request, Lease $lease): RedirectResponse
+    public function update(UpdateLeaseRequest $request, Lease $lease): RedirectResponse
     {
         $this->authorize('update', $lease);
 
@@ -126,6 +150,10 @@ class LeaseController extends Controller
 
     /**
      * Delete the lease agreement and make room available again.
+     *
+     * @param Lease $lease
+     * @return RedirectResponse
+     * @throws \Throwable
      */
     public function destroy(Lease $lease): RedirectResponse
     {

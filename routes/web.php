@@ -58,4 +58,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('invoices.checkout');
 });
 
+// Tenant Public Signed Routes (No Auth Required)
+Route::middleware(['signed'])->group(function () {
+    Route::get('/pay/{invoice}', [InvoiceController::class, 'publicShow'])
+        ->name('invoices.public-show');
+    Route::post('/pay/{invoice}/checkout', [InvoiceController::class, 'publicCheckout'])
+        ->name('invoices.public-checkout');
+});
+
 require __DIR__ . '/auth.php';

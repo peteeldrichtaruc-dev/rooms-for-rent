@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
 use Stripe\Exception\ApiErrorException;
@@ -139,6 +140,77 @@ class InvoiceController extends Controller
             'mode' => 'payment',
             'success_url' => route('invoices.show', $invoice->id) . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => route('invoices.show', $invoice->id),
+            'metadata' => [
+                'invoice_id' => $invoice->id,
+            ],
+        ]);
+
+        return Inertia::location($checkoutSession->url);
+    }
+
+    /**
+     * Display a public, unauthenticated invoice view via signed URL.
+     *
+     * @param Invoice $invoice
+     * @return Response
+     */
+    public function publicShow(Invoice $invoice): Response
+    {
+        $invoice->load(['lease.tenant', 'lease.room.property']);
+
+        return Inertia::render('Invoices/PublicShow', [
+            'invoice' => $invoice,
+            'checkoutUrl' => URL::temporarySignedRoute(
+                'invoices.public-checkout',
+                now()->addDays(7),
+                ['invoice' => $invoice->id]
+            ),
+        ]);
+    }
+
+    /**
+     * Initiate Stripe Checkout from a public signed URL.
+     *
+     * @param Invoice $invoice
+     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws ApiErrorException
+     */
+    public function publicCheckout(Invoice $invoice)
+    {
+        if ($invoice->status === 'paid') {
+            return redirect()->back()->with('error', 'This invoice has already been paid.');
+        }
+
+        $stripe = new StripeClient(config('services.stripe.secret'));
+
+        // Pass additional parameters inside the route parameter array so Laravel signs them properly
+        $successUrl = URL::signedRoute('invoices.public-show', [
+            'invoice' => $invoice->id,
+            'payment' => 'success',
+        ]);
+
+        $cancelUrl = URL::signedRoute('invoices.public-show', [
+            'invoice' => $invoice->id,
+            'payment' => 'cancelled',
+        ]);
+
+        $checkoutSession = $stripe->checkout->sessions->create([
+            'payment_method_types' => ['card'],
+            'customer_email' => $invoice->lease?->tenant?->email,
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'php',
+                    'product_data' => [
+                        'name' => 'Rental Invoice #' . $invoice->invoice_number,
+                        'description' => $invoice->description ?? 'Monthly Rent Payment',
+                    ],
+                    'unit_amount' => (int)($invoice->amount * 100),
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'success_url' => $successUrl,
+            'cancel_url' => $cancelUrl,
             'metadata' => [
                 'invoice_id' => $invoice->id,
             ],

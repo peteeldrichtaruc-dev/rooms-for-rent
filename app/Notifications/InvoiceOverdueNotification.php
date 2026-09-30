@@ -8,6 +8,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 use NotificationChannels\Twilio\TwilioChannel;
 use NotificationChannels\Twilio\TwilioSmsMessage;
 
@@ -52,6 +53,20 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
     }
 
     /**
+     * Generate a 30-day signed payment link for public tenant access.
+     *
+     * @return string
+     */
+    protected function getSignedPaymentUrl(): string
+    {
+        return URL::temporarySignedRoute(
+            'invoices.public-show',
+            now()->addDays(30),
+            ['invoice' => $this->invoice->id]
+        );
+    }
+
+    /**
      * @param object $notifiable
      * @return MailMessage
      */
@@ -76,15 +91,16 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
                 ->line('Please review the invoice on your dashboard.');
         }
 
-        // Tenant Notification
+        // Tenant Notification with Signed Payment URL
         $tenantName = $this->invoice->lease?->tenant?->first_name ?? 'Valued Tenant';
+        $paymentUrl = $this->getSignedPaymentUrl();
 
         return (new MailMessage)
             ->subject("OVERDUE NOTICE: Invoice #{$this->invoice->id} for Room {$roomNumber}")
             ->greeting("Hello {$tenantName},")
             ->line("Your rent invoice for Room {$roomNumber} was due on **{$dueDate}** and is now overdue.")
             ->line("Outstanding Balance: ₱{$formattedAmount}")
-            ->action('Pay Now', url("/invoices/{$this->invoice->id}"))
+            ->action('Pay Online Now', $paymentUrl)
             ->line('Please process your payment as soon as possible to avoid any late penalties.');
     }
 
@@ -98,9 +114,10 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
     {
         $roomNumber = $this->invoice->lease?->room?->room_number ?? 'N/A';
         $formattedAmount = number_format($this->invoice->amount, 2);
+        $paymentUrl = $this->getSignedPaymentUrl();
 
         return (new TwilioSmsMessage)
-            ->content("RoomsForRent Alert: Your rent invoice #{$this->invoice->id} for Room {$roomNumber} (₱{$formattedAmount}) is OVERDUE. Please process payment as soon as possible.");
+            ->content("RoomsForRent Alert: Rent invoice #{$this->invoice->id} for Room {$roomNumber} (₱{$formattedAmount}) is OVERDUE. Pay online: {$paymentUrl}");
     }
 
     /**
@@ -113,7 +130,8 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
     {
         $roomNumber = $this->invoice->lease?->room?->room_number ?? 'N/A';
         $formattedAmount = number_format($this->invoice->amount, 2);
+        $paymentUrl = $this->getSignedPaymentUrl();
 
-        return "RoomsForRent Alert: Rent invoice #{$this->invoice->id} for Room {$roomNumber} (₱{$formattedAmount}) is OVERDUE. Please process payment as soon as possible.";
+        return "RoomsForRent Alert: Rent invoice #{$this->invoice->id} for Room {$roomNumber} (₱{$formattedAmount}) is OVERDUE. Pay online: {$paymentUrl}";
     }
 }
