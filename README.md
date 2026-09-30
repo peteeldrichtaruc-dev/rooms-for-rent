@@ -1,38 +1,53 @@
-# RoomsForRent — Multi-Tenant Property Management SaaS
+# 🏢 RoomsForRent — Multi-Tenant Property Management SaaS
 
-A production-ready Property Management SaaS application built with **Laravel**, **Inertia.js**, **React**, and **TypeScript**. Features automated billing pipelines, background queue workers, multi-channel notification architecture (Email + SMS), Inertia SSR support, and real-time operational metrics.
-
----
-
-## Technical Stack & Infrastructure
-
-- **Backend:** Laravel 11 / PHP 8.3
-- **Frontend:** Inertia.js (with SSR) + React 18 + TypeScript + Tailwind CSS
-- **Database:** MySQL 8.0
-- **Caching & Queues:** Redis
-- **Containerization:** Docker Compose (`app`, `queue`, `scheduler`, `redis`, `db`)
+A production-ready, high-performance Property Management SaaS built with **Laravel 11**, **Inertia.js**, and **React**. Designed with a decoupled multi-channel notification core, automated background billing pipelines, and server-side rendering (SSR) for robust scalability and optimal SEO.
 
 ---
 
-## Architectural Highlights
+## ⚡ Core Architecture & Engineering Highlights
 
-- **Automated Billing Pipeline:** Custom Artisan commands (`invoices:generate-monthly`) for recurring monthly invoice generation.
-- **Background Reminders:** Daily scheduled task (`reminders:send`) to identify overdue payments and expiring leases, dispatching notifications asynchronously via Redis workers.
-- **Decoupled Notification Architecture:** Extensible notification routing supporting Mail, Twilio SMS API, and a custom local development driver (`SmsLogChannel`).
-- **Server-Side Rendering (SSR):** Powered by Inertia SSR Node service for optimized search engine visibility and fast initial page loads.
-- **Multi-Tenant Room Occupancy Scoping:** Real-time occupancy tracking and revenue metrics scoped by property and room assignments.
+*   **Multi-Tenant Scoping:** Built-in tenant isolation for real-time room occupancy tracking, financial mapping, and localized revenue metrics.
+*   **Automated Billing Pipelines:** Custom Artisan commands (`invoices:generate-monthly`) handle transactional logic for recurring monthly billing cycles.
+*   **Asynchronous Background Workers:** Redis-backed scheduled tasks (`reminders:send`) run daily to automatically catch overdue invoices or lease expirations.
+*   **Decoupled Notification Layer:** Extensible multi-channel notification architecture supporting Mail, Twilio SMS API, and a local mock driver (`SmsLogChannel`).
+*   **Inertia SSR Engine:** Node-powered server-side rendering for lightning-fast initial page loads and deep crawlability.
 
 ---
 
-## Quick Start (Docker One-Liner)
+## 🛠️ Technical Stack & Infrastructure
 
-Run the entire application stack using Docker Compose:
+*   **Backend:** PHP 8.3 / Laravel 11
+*   **Frontend:** React 18 / TypeScript / Tailwind CSS / Inertia.js (with SSR)
+*   **Data & Caching:** MySQL 8.0 / Redis
+*   **Containerization:** Full multi-container Docker suite (`app`, `queue`, `scheduler`, `redis`, `db`)
 
+---
+
+## 🚀 Quick Start (Docker Environment)
+
+Spin up the entire local development environment including queues, scheduling workers, and database instances with the following steps:
+
+### 1. Boot the Stack
 ```bash
 docker compose up -d
+```
+
+### 2. Standard Application Setup
+```bash
+# Dependencies & Environment
 docker compose exec app composer install
 docker compose exec app npm install
 docker compose exec app cp .env.example .env
 docker compose exec app php artisan key:generate
+
+# Database & Frontend Assets
 docker compose exec app php artisan migrate --seed
 docker compose exec app npm run build
+```
+
+---
+
+## 🧑‍💻 Useful Artisan Commands
+
+*   **`php artisan invoices:generate-monthly`** — Manually execute the recurring billing engine.
+*   **`php artisan reminders:send`** — Evaluate overdue payments and dispatch SMS/Email notifications.
