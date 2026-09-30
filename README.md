@@ -49,5 +49,5 @@ docker compose exec app npm run build
 
 ## Useful Artisan Commands
 
-*   **`php artisan invoices:generate-monthly`** — Manually execute the recurring billing engine.
-*   **`php artisan reminders:send`** — Evaluate overdue payments and dispatch SMS/Email notifications.
+*   **`docker compose exec app php artisan invoices:generate-monthly`** — Manually execute the recurring billing engine.
+*   **`docker compose exec app php artisan reminders:send`** — Evaluate overdue payments and dispatch SMS/Email notifications.
