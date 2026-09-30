@@ -7,6 +7,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,6 +26,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::post('/webhooks/stripe', [StripeWebhookController::class, 'handle']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard

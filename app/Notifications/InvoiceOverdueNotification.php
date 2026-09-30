@@ -8,6 +8,8 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Twilio\TwilioChannel;
+use NotificationChannels\Twilio\TwilioSmsMessage;
 
 class InvoiceOverdueNotification extends Notification implements ShouldQueue
 {
@@ -41,6 +43,7 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
                 : ($notifiable->phone ?? null);
 
             if (!empty($phoneNumber)) {
+                $channels[] = TwilioChannel::class;
                 $channels[] = SmsLogChannel::class;
             }
         }
@@ -83,6 +86,21 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
             ->line("Outstanding Balance: ₱{$formattedAmount}")
             ->action('Pay Now', url("/invoices/{$this->invoice->id}"))
             ->line('Please process your payment as soon as possible to avoid any late penalties.');
+    }
+
+    /**
+     * Build the SMS representation for Twilio.
+     *
+     * @param object $notifiable
+     * @return TwilioSmsMessage
+     */
+    public function toTwilio(object $notifiable): TwilioSmsMessage
+    {
+        $roomNumber = $this->invoice->lease?->room?->room_number ?? 'N/A';
+        $formattedAmount = number_format($this->invoice->amount, 2);
+
+        return (new TwilioSmsMessage)
+            ->content("RoomsForRent Alert: Your rent invoice #{$this->invoice->id} for Room {$roomNumber} (₱{$formattedAmount}) is OVERDUE. Please process payment as soon as possible.");
     }
 
     /**
