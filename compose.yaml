@@ -16,6 +16,23 @@ services:
             - postgres
             - redis
 
+    scheduler:
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+        container_name: rooms_scheduler
+        restart: unless-stopped
+        working_dir: /var/www/html
+        command: php artisan schedule:work
+        volumes:
+            - .:/var/www/html
+        networks:
+            - rooms-network
+        depends_on:
+            - app
+            - postgres
+            - redis
+
     webserver:
         image: nginx:alpine
         container_name: rooms_webserver
