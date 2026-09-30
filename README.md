@@ -29,7 +29,7 @@ Spin up the entire local development environment including queues, scheduling wo
 
 ### 1. Boot the Stack
 ```bash
-docker compose up -d
+docker-compose up -d --build
 ```
 
 ### 2. Standard Application Setup
