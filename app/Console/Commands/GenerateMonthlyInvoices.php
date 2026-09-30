@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Invoice;
 use App\Models\Lease;
+use App\Notifications\InvoiceGeneratedNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
@@ -56,7 +57,7 @@ class GenerateMonthlyInvoices extends Command
             if (!$existingInvoice) {
                 $invoiceNumber = 'INV-' . strtoupper(Str::random(8));
 
-                Invoice::create([
+                $invoice = Invoice::create([
                     'user_id' => $landlordId,
                     'lease_id' => $lease->id,
                     'invoice_number' => $invoiceNumber,
@@ -65,6 +66,10 @@ class GenerateMonthlyInvoices extends Command
                     'status' => 'pending',
                     'description' => 'Auto generated invoice #' . $invoiceNumber,
                 ]);
+
+                if ($lease->tenant) {
+                    $lease->tenant->notify(new InvoiceGeneratedNotification($invoice));
+                }
 
                 $generatedCount++;
             }
