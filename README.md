@@ -1,10 +1,10 @@
-# 🏢 RoomsForRent — Multi-Tenant Property Management SaaS
+# RoomsForRent — Multi-Tenant Property Management SaaS
 
 A production-ready, high-performance Property Management SaaS built with **Laravel 11**, **Inertia.js**, and **React**. Designed with a decoupled multi-channel notification core, automated background billing pipelines, and server-side rendering (SSR) for robust scalability and optimal SEO.
 
 ---
 
-## ⚡ Core Architecture & Engineering Highlights
+## Core Architecture & Engineering Highlights
 
 *   **Multi-Tenant Scoping:** Built-in tenant isolation for real-time room occupancy tracking, financial mapping, and localized revenue metrics.
 *   **Automated Billing Pipelines:** Custom Artisan commands (`invoices:generate-monthly`) handle transactional logic for recurring monthly billing cycles.
@@ -14,7 +14,7 @@ A production-ready, high-performance Property Management SaaS built with **Larav
 
 ---
 
-## 🛠️ Technical Stack & Infrastructure
+## Technical Stack & Infrastructure
 
 *   **Backend:** PHP 8.3 / Laravel 11
 *   **Frontend:** React 18 / TypeScript / Tailwind CSS / Inertia.js (with SSR)
@@ -23,7 +23,7 @@ A production-ready, high-performance Property Management SaaS built with **Larav
 
 ---
 
-## 🚀 Quick Start (Docker Environment)
+## Quick Start (Docker Environment)
 
 Spin up the entire local development environment including queues, scheduling workers, and database instances with the following steps:
 
@@ -47,7 +47,7 @@ docker compose exec app npm run build
 
 ---
 
-## 🧑‍💻 Useful Artisan Commands
+## Useful Artisan Commands
 
 *   **`php artisan invoices:generate-monthly`** — Manually execute the recurring billing engine.
 *   **`php artisan reminders:send`** — Evaluate overdue payments and dispatch SMS/Email notifications.
