@@ -40,9 +40,7 @@ export default function PublicShow({
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-            <Head
-                title={`Pay Invoice #${invoice.invoice_number} - RoomsForRent`}
-            />
+            <Head title={`Pay Invoice #${invoice.invoice_number}`} />
 
             <div className="max-w-md w-full bg-white rounded-2xl border border-slate-200/80 shadow-sm p-8 space-y-6">
                 {/* Header */}

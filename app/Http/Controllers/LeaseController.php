@@ -23,15 +23,36 @@ class LeaseController extends Controller
      */
     public function index(Request $request): Response
     {
-        $leases = Lease::whereHas('room.property', function ($query) use ($request) {
-            $query->where('user_id', $request->user()->id);
-        })
+        $search = trim($request->input('search', ''));
+
+        $leases = Lease::query()
+            ->whereHas('room.property', function ($query) use ($request) {
+                $query->where('user_id', $request->user()->id);
+            })
             ->with(['room.property', 'tenant'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('tenant', function ($tenantQuery) use ($search) {
+                        $tenantQuery->where('first_name', 'ilike', "%{$search}%")
+                            ->orWhere('last_name', 'ilike', "%{$search}%");
+                    })
+                        ->orWhereHas('room', function ($roomQuery) use ($search) {
+                            $roomQuery->where('room_number', 'ilike', "%{$search}%")
+                                ->orWhereHas('property', function ($propertyQuery) use ($search) {
+                                    $propertyQuery->where('name', 'ilike', "%{$search}%");
+                                });
+                        });
+                });
+            })
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Leases/Index', [
             'leases' => $leases,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

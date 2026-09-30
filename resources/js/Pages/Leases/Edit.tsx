@@ -84,7 +84,7 @@ export default function Edit({
                 </div>
             }
         >
-            <Head title={`Edit Lease #${lease.id} - RoomsForRent`} />
+            <Head title={`Edit Lease #${lease.id}`} />
 
             <div
                 className="max-w-2xl bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8"

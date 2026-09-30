@@ -62,7 +62,7 @@ export default function Dashboard({
                 </div>
             }
         >
-            <Head title="Dashboard - BookRepublic" />
+            <Head title="Dashboard" />
 
             <div className="space-y-6">
                 {/* 4 Primary Top Metrics Grid */}

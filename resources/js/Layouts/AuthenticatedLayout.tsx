@@ -54,7 +54,7 @@ export default function AuthenticatedLayout({
             ),
         },
         {
-            name: "Rooms & Units",
+            name: "Rooms",
             href: route("rooms.index"),
             active: route().current("rooms.*"),
             icon: (

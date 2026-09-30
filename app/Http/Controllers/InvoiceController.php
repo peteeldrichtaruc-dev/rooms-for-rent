@@ -29,16 +29,35 @@ class InvoiceController extends Controller
     /**
      * Display a listing of all invoices with summary stats.
      *
+     * @param Request $request
      * @return Response
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $user = auth()->user();
+        $user = $request->user();
+        $search = trim($request->input('search', ''));
 
-        $invoices = Invoice::where('user_id', $user->id)
+        $invoices = Invoice::query()
+            ->where('user_id', $user->id)
             ->with(['lease.tenant', 'lease.room.property'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('invoice_number', 'ilike', "%{$search}%")
+                        ->orWhereHas('lease.tenant', function ($tQuery) use ($search) {
+                            $tQuery->where('first_name', 'ilike', "%{$search}%")
+                                ->orWhere('last_name', 'ilike', "%{$search}%");
+                        })
+                        ->orWhereHas('lease.room', function ($rQuery) use ($search) {
+                            $rQuery->where('room_number', 'ilike', "%{$search}%")
+                                ->orWhereHas('property', function ($pQuery) use ($search) {
+                                    $pQuery->where('name', 'ilike', "%{$search}%");
+                                });
+                        });
+                });
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         $stats = [
             'total_billed' => Invoice::where('user_id', $user->id)->sum('amount'),
@@ -50,6 +69,9 @@ class InvoiceController extends Controller
         return Inertia::render('Invoices/Index', [
             'invoices' => $invoices,
             'stats' => $stats,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

@@ -70,7 +70,7 @@ export default function Create({
                 </div>
             }
         >
-            <Head title="Create Lease - RoomsForRent" />
+            <Head title="Create Lease" />
 
             <div className="max-w-2xl bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8">
                 <form onSubmit={submit} className="space-y-5">

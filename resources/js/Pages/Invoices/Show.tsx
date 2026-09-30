@@ -127,7 +127,7 @@ export default function Show({ invoice }: { invoice: Invoice }) {
                 </div>
             }
         >
-            <Head title={`Invoice ${invoice.invoice_number} - RoomsForRent`} />
+            <Head title={`Invoice ${invoice.invoice_number}`} />
 
             <div className="max-w-3xl space-y-6" data-aos="fade-up">
                 {/* Main Printable Invoice Card */}

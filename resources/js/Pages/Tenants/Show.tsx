@@ -66,7 +66,7 @@ export default function Show({ tenant }: { tenant: Tenant }) {
                 </div>
             }
         >
-            <Head title={`${tenant.full_name} - RoomsForRent`} />
+            <Head title={`${tenant.full_name}`} />
 
             <div className="max-w-4xl space-y-6" data-aos="fade-up">
                 {/* Information Grid */}

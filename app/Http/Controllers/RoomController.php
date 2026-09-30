@@ -20,14 +20,28 @@ class RoomController extends Controller
      */
     public function index(Request $request): Response
     {
+        $search = trim($request->input('search', ''));
+
         $rooms = $request->user()
             ->rooms()
             ->with('property')
+            ->when($search !== '', function ($roomQuery) use ($search) {
+                $roomQuery->where(function ($q) use ($search) {
+                    $q->where('room_number', 'ilike', "%{$search}%")
+                        ->orWhereHas('property', function ($propertyQuery) use ($search) {
+                            $propertyQuery->where('name', 'ilike', "%{$search}%");
+                        });
+                });
+            })
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Rooms/Index', [
             'rooms' => $rooms,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

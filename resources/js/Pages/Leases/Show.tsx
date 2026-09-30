@@ -71,7 +71,7 @@ export default function Show({ lease }: { lease: Lease }) {
                 </div>
             }
         >
-            <Head title={`Lease #${lease.id} - RoomsForRent`} />
+            <Head title={`Lease #${lease.id}`} />
 
             <div className="max-w-4xl space-y-6">
                 {/* Metric Cards */}

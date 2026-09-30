@@ -44,7 +44,7 @@ export default function Edit({ tenant }: { tenant: Tenant }) {
                 </div>
             }
         >
-            <Head title={`Edit ${tenant.first_name} - RoomsForRent`} />
+            <Head title={`Edit ${tenant.first_name}`} />
 
             <div
                 className="max-w-2xl bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8"

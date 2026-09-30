@@ -36,7 +36,7 @@ export default function Show({ room }: { room: Room }) {
                 </div>
             }
         >
-            <Head title={`Room ${room.room_number} - RoomsForRent`} />
+            <Head title={`Room ${room.room_number}`} />
 
             <div className="max-w-3xl space-y-6" data-aos="fade-up">
                 <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 grid grid-cols-2 sm:grid-cols-4 gap-6">

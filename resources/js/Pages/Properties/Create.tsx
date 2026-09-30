@@ -34,7 +34,7 @@ export default function Create() {
                 </div>
             }
         >
-            <Head title="Add Property - RoomsForRent" />
+            <Head title="Add Property" />
 
             <div
                 className="max-w-2xl bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8"

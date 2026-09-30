@@ -26,14 +26,26 @@ class PropertyController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
+        $search = trim($request->input('search', ''));
+
         $properties = $request->user()
             ->properties()
             ->withCount('rooms')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'ilike', "%{$search}%")
+                        ->orWhere('address', 'ilike', "%{$search}%");
+                });
+            })
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Properties/Index', [
             'properties' => $properties,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

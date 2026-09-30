@@ -23,7 +23,7 @@ export default function Edit({
                 </div>
             }
         >
-            <Head title="Profile Settings - RoomsForRent" />
+            <Head title="Profile Settings" />
 
             <div className="space-y-8 max-w-4xl">
                 {/* Profile Info Section */}

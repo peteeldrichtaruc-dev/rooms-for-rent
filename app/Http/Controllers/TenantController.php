@@ -6,6 +6,7 @@ use App\Http\Requests\StoreTenantRequest;
 use App\Http\Requests\UpdateTenantRequest;
 use App\Models\Tenant;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,17 +22,33 @@ class TenantController extends Controller
     /**
      * Display a paginated list of tenants owned by the authenticated user.
      *
+     * @param Request $request
      * @return Response
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $tenants = auth()->user()->tenants()
+        $search = trim($request->input('search', ''));
+
+        $tenants = $request->user()
+            ->tenants()
             ->withCount('leases')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('first_name', 'ilike', "%{$search}%")
+                        ->orWhere('last_name', 'ilike', "%{$search}%")
+                        ->orWhere('email', 'ilike', "%{$search}%")
+                        ->orWhere('phone', 'ilike', "%{$search}%");
+                });
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Tenants/Index', [
             'tenants' => $tenants,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

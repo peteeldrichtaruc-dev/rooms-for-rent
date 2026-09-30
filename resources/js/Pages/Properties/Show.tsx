@@ -50,7 +50,7 @@ export default function Show({ property }: { property: Property }) {
                 </div>
             }
         >
-            <Head title={`${property.name} - RoomsForRent`} />
+            <Head title={`${property.name}`} />
 
             <div className="space-y-8" data-aos="fade-up">
                 {/* Description Card */}
