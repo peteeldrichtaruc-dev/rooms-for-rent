@@ -1,5 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
+import { useState } from "react";
 
 interface StatData {
     properties_count: number;
@@ -28,6 +29,25 @@ export default function Dashboard({
     stats: StatData;
     recentActivities: Activity[];
 }) {
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    const handleGenerateInvoices = () => {
+        if (
+            confirm(
+                "Are you sure you want to generate monthly invoices for all active leases?",
+            )
+        ) {
+            setIsGenerating(true);
+            router.post(
+                route("invoices.generate-monthly"),
+                {},
+                {
+                    onFinish: () => setIsGenerating(false),
+                },
+            );
+        }
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -42,7 +62,7 @@ export default function Dashboard({
                 </div>
             }
         >
-            <Head title="Dashboard - RoomsForRent" />
+            <Head title="Dashboard - BookRepublic" />
 
             <div className="space-y-6">
                 {/* 4 Primary Top Metrics Grid */}
@@ -309,9 +329,11 @@ export default function Dashboard({
                                 Register New Tenant Lease
                             </Link>
 
-                            <Link
-                                href={route("invoices.create")}
-                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 text-xs font-bold rounded-xl transition"
+                            <button
+                                type="button"
+                                onClick={handleGenerateInvoices}
+                                disabled={isGenerating}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 text-xs font-bold rounded-xl transition disabled:opacity-50 cursor-pointer"
                             >
                                 <svg
                                     className="w-4 h-4 text-slate-500"
@@ -326,8 +348,10 @@ export default function Dashboard({
                                         d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                     />
                                 </svg>
-                                Generate Monthly Invoices
-                            </Link>
+                                {isGenerating
+                                    ? "Generating Invoices..."
+                                    : "Generate Monthly Invoices"}
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
+use App\Models\Lease;
+use App\Notifications\InvoiceGeneratedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 use Stripe\Exception\ApiErrorException;
@@ -105,6 +108,68 @@ class InvoiceController extends Controller
         return Inertia::render('Invoices/Show', [
             'invoice' => $invoice,
         ]);
+    }
+
+    /**
+     * Generate monthly invoices for all active leases belonging to the landlord.
+     */
+    public function generateMonthly(Request $request)
+    {
+        $user = $request->user();
+        $now = Carbon::now();
+        $startOfMonth = $now->copy()->startOfMonth();
+        $endOfMonth = $now->copy()->endOfMonth();
+
+        // 1. Fetch active leases belonging to landlord's properties
+        $activeLeases = Lease::whereHas('room.property', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+            ->where('status', 'active')
+            ->with(['tenant', 'room'])
+            ->get();
+
+        if ($activeLeases->isEmpty()) {
+            return redirect()->back()->with('warning', 'No active leases found to generate invoices.');
+        }
+
+        $generatedCount = 0;
+        $skippedCount = 0;
+
+        foreach ($activeLeases as $lease) {
+            // 2. Prevent duplicate invoice generation for the current month
+            $existingInvoice = Invoice::where('lease_id', $lease->id)
+                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                ->exists();
+
+            if ($existingInvoice) {
+                $skippedCount++;
+                continue;
+            }
+
+            // 3. Create the monthly invoice
+            $invoice = Invoice::create([
+                'user_id' => $user->id,
+                'lease_id' => $lease->id,
+                'invoice_number' => 'INV-' . strtoupper(uniqid()),
+                'amount' => $lease->rent_amount,
+                'due_date' => $now->copy()->addDays(5), // Set due date (e.g., 5 days from generation)
+                'status' => 'pending',
+                'description' => "Monthly Rent for {$now->format('F Y')}",
+            ]);
+
+            // 4. Send notification (Email + SMS) to tenant
+            if ($lease->tenant) {
+                $lease->tenant->notify(new InvoiceGeneratedNotification($invoice));
+            }
+
+            $generatedCount++;
+        }
+
+        if ($generatedCount === 0) {
+            return redirect()->back()->with('info', "Invoices for {$now->format('F Y')} have already been generated for all active leases.");
+        }
+
+        return redirect()->back()->with('success', "Successfully generated {$generatedCount} invoice(s)." . ($skippedCount > 0 ? " {$skippedCount} skipped (already generated)." : ''));
     }
 
     /**

@@ -56,6 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('invoices.mark-as-paid');
     Route::post('invoices/{invoice}/checkout', [InvoiceController::class, 'checkout'])
         ->name('invoices.checkout');
+    Route::post('/invoices/generate-monthly', [InvoiceController::class, 'generateMonthly'])
+        ->name('invoices.generate-monthly');
 });
 
 // Tenant Public Signed Routes (No Auth Required)
