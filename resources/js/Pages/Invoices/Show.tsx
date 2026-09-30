@@ -38,8 +38,12 @@ interface Invoice {
 }
 
 export default function Show({ invoice }: { invoice: Invoice }) {
+    const handleStripeCheckout = () => {
+        router.post(route("invoices.checkout", invoice.id));
+    };
+
     const handleMarkAsPaid = () => {
-        if (confirm("Mark this invoice as paid?")) {
+        if (confirm("Mark this invoice as paid (Cash)?")) {
             router.patch(route("invoices.mark-as-paid", invoice.id));
         }
     };
@@ -77,14 +81,35 @@ export default function Show({ invoice }: { invoice: Invoice }) {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        {invoice.status === "pending" && (
-                            <button
-                                onClick={handleMarkAsPaid}
-                                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow-sm"
-                            >
-                                Mark Paid
-                            </button>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        {invoice.status !== "paid" && (
+                            <>
+                                <button
+                                    onClick={handleStripeCheckout}
+                                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl transition shadow-sm flex items-center gap-1.5"
+                                >
+                                    <svg
+                                        className="w-3.5 h-3.5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                    Pay Online (Stripe)
+                                </button>
+                                <button
+                                    onClick={handleMarkAsPaid}
+                                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition shadow-sm"
+                                >
+                                    Mark Paid (Cash)
+                                </button>
+                            </>
                         )}
                         <button
                             onClick={() => window.print()}
@@ -130,7 +155,7 @@ export default function Show({ invoice }: { invoice: Invoice }) {
                                     <span className="font-bold">
                                         {invoice.paid_at}
                                     </span>{" "}
-                                    ({invoice.payment_method || "Cash"})
+                                    ({invoice.payment_method || "Online"})
                                 </p>
                             )}
                         </div>

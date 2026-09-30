@@ -6,14 +6,17 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Stripe\Exception\ApiErrorException;
+use Stripe\StripeClient;
 
 /**
  * Class InvoiceController
  *
- * Manages billing statements, invoice generation, and status tracking.
+ * Manages billing statements, invoice generation, status tracking, and checkout.
  *
  * @package App\Http\Controllers
  */
@@ -104,7 +107,48 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Mark an invoice as paid directly.
+     * Initiate Stripe Checkout Session for online invoice settlement.
+     *
+     * @param Invoice $invoice
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws ApiErrorException
+     */
+    public function checkout(Invoice $invoice)
+    {
+        $this->authorize('view', $invoice);
+
+        if ($invoice->status === 'paid') {
+            return redirect()->back()->with('error', 'This invoice has already been paid.');
+        }
+
+        $stripe = new StripeClient(config('services.stripe.secret'));
+
+        $checkoutSession = $stripe->checkout->sessions->create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'php',
+                    'product_data' => [
+                        'name' => 'Rental Invoice ' . $invoice->invoice_number,
+                        'description' => $invoice->description ?? 'Monthly Rent Payment',
+                    ],
+                    'unit_amount' => (int)($invoice->amount * 100), // Amount in cents/centavos
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'success_url' => route('invoices.show', $invoice->id) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('invoices.show', $invoice->id),
+            'metadata' => [
+                'invoice_id' => $invoice->id,
+            ],
+        ]);
+
+        return Inertia::location($checkoutSession->url);
+    }
+
+    /**
+     * Mark an invoice as paid directly (Cash).
      *
      * @param Invoice $invoice
      * @return RedirectResponse

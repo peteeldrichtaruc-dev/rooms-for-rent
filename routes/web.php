@@ -54,6 +54,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('invoices', InvoiceController::class);
     Route::patch('invoices/{invoice}/mark-as-paid', [InvoiceController::class, 'markAsPaid'])
         ->name('invoices.mark-as-paid');
+    Route::post('invoices/{invoice}/checkout', [InvoiceController::class, 'checkout'])
+        ->name('invoices.checkout');
 });
 
 require __DIR__ . '/auth.php';
