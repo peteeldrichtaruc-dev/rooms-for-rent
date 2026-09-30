@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Broadcasting\SmsLogChannel;
 use App\Models\Invoice;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,12 +25,27 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
     }
 
     /**
+     * Determine delivery channels based on recipient type and available contact info.
+     *
      * @param object $notifiable
-     * @return string[]
+     * @return array<int, string>
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        $channels = ['mail'];
+
+        // Dispatch local SMS log notification for tenants with phone numbers
+        if ($this->recipientType === 'tenant') {
+            $phoneNumber = method_exists($notifiable, 'routeNotificationForTwilio')
+                ? $notifiable->routeNotificationForTwilio()
+                : ($notifiable->phone ?? null);
+
+            if (!empty($phoneNumber)) {
+                $channels[] = SmsLogChannel::class;
+            }
+        }
+
+        return $channels;
     }
 
     /**
@@ -67,5 +83,19 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
             ->line("Outstanding Balance: ₱{$formattedAmount}")
             ->action('Pay Now', url("/invoices/{$this->invoice->id}"))
             ->line('Please process your payment as soon as possible to avoid any late penalties.');
+    }
+
+    /**
+     * Build SMS content for local log driver.
+     *
+     * @param object $notifiable
+     * @return string
+     */
+    public function toSms(object $notifiable): string
+    {
+        $roomNumber = $this->invoice->lease?->room?->room_number ?? 'N/A';
+        $formattedAmount = number_format($this->invoice->amount, 2);
+
+        return "RoomsForRent Alert: Rent invoice #{$this->invoice->id} for Room {$roomNumber} (₱{$formattedAmount}) is OVERDUE. Please process payment as soon as possible.";
     }
 }

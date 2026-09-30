@@ -57,9 +57,31 @@ class Tenant extends Model
     }
 
     /**
+     * Route notifications for the Mail channel.
+     *
+     * Falls back to the tenant's direct email if no linked user account exists.
+     *
+     * @return string
+     */
+    public function routeNotificationForMail(): string
+    {
+        return $this->user?->email ?? $this->email;
+    }
+
+    /**
+     * Route notifications for the Twilio SMS channel.
+     *
+     * @return string|null
+     */
+    public function routeNotificationForTwilio(): ?string
+    {
+        return $this->phone;
+    }
+
+    /**
      * Get the user (landlord/property manager) that created and manages this tenant.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function user(): BelongsTo
     {
@@ -69,7 +91,7 @@ class Tenant extends Model
     /**
      * Get the lease agreements associated with this tenant.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function leases(): HasMany
     {
