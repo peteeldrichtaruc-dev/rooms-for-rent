@@ -1,6 +1,6 @@
 # RoomsForRent — Multi-Tenant Property Management SaaS
 
-A production-ready, high-performance Property Management SaaS built with **Laravel 11**, **Inertia.js**, and **React**. Designed with a decoupled multi-channel notification core, automated background billing pipelines, and server-side rendering (SSR) for robust scalability and optimal SEO.
+A production-ready, high-performance Property Management SaaS built with **Laravel 13**, **Inertia.js**, and **React**. Designed with a decoupled multi-channel notification core, automated background billing pipelines, and server-side rendering (SSR) for robust scalability and optimal SEO.
 
 ---
 
@@ -16,9 +16,9 @@ A production-ready, high-performance Property Management SaaS built with **Larav
 
 ## Technical Stack & Infrastructure
 
-*   **Backend:** PHP 8.3 / Laravel 11
+*   **Backend:** PHP 8.3 / Laravel 13
 *   **Frontend:** React 18 / TypeScript / Tailwind CSS / Inertia.js (with SSR)
-*   **Data & Caching:** MySQL 8.0 / Redis
+*   **Data & Caching:** PostgreSQL 18 / Redis
 *   **Containerization:** Full multi-container Docker suite (`app`, `queue`, `scheduler`, `redis`, `db`)
 
 ---
