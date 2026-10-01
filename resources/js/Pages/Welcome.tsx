@@ -66,7 +66,7 @@ export default function Welcome({
                         <p className="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-8">
                             Engineered for landlords, property managers, and
                             co-living operations. Track room availability,
-                            digitize tenant leases, and automate monthly
+                            digitize renter leases, and automate monthly
                             invoicing effortlesly.
                         </p>
 
@@ -189,7 +189,7 @@ export default function Welcome({
                             <p className="text-slate-600 text-sm leading-relaxed">
                                 Scheduled background jobs issue rent invoices,
                                 calculate utility add-ons, and keep records of
-                                overdue tenant balances.
+                                overdue renter balances.
                             </p>
                         </div>
                     </div>

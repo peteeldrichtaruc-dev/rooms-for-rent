@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, Link, router } from "@inertiajs/react";
 
-interface Tenant {
+interface Renter {
     id: number;
     name: string;
     email: string;
@@ -26,7 +26,7 @@ interface Lease {
     deposit_amount: number;
     status: "active" | "ended" | "terminated";
     notes?: string;
-    tenant: Tenant;
+    renter: Renter;
     room: Room;
 }
 
@@ -54,6 +54,7 @@ export default function Show({ lease }: { lease: Lease }) {
                             {lease.room?.room_number}
                         </p>
                     </div>
+
                     <div className="flex items-center gap-2">
                         <Link
                             href={route("leases.edit", lease.id)}
@@ -81,11 +82,10 @@ export default function Show({ lease }: { lease: Lease }) {
                             Status
                         </span>
                         <span
-                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider inline-block ${
-                                lease.status === "active"
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider inline-block ${lease.status === "active"
                                     ? "bg-emerald-50 text-emerald-700"
                                     : "bg-slate-100 text-slate-600"
-                            }`}
+                                }`}
                         >
                             {lease.status}
                         </span>
@@ -125,17 +125,17 @@ export default function Show({ lease }: { lease: Lease }) {
 
                 {/* Information Sections */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Tenant Details */}
+                    {/* Renter Details */}
                     <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-3">
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                            Tenant Information
+                            Renter Information
                         </h3>
                         <div>
                             <p className="text-sm font-bold text-slate-900">
-                                {lease.tenant?.name}
+                                {lease.renter?.name}
                             </p>
                             <p className="text-xs text-slate-500">
-                                {lease.tenant?.email}
+                                {lease.renter?.email}
                             </p>
                         </div>
                     </div>

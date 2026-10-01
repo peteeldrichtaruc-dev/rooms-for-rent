@@ -36,7 +36,7 @@ docker-compose up -d --build
 ```bash
 # Dependencies & Environment
 docker compose exec app composer install
-docker compose exec app npm install
+docker compose exec app npm install --legacy-peer-deps
 docker compose exec app cp .env.example .env
 docker compose exec app php artisan key:generate
 

@@ -28,7 +28,7 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Display checkout cancellation page when tenant cancels or exits Stripe payment.
+     * Display checkout cancellation page when renter cancels or exits Stripe payment.
      *
      * @param Request $request
      * @return Response

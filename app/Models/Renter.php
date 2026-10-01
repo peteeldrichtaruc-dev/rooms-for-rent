@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * Class Tenant
+ * Class Renter
  *
- * Represents a tenant (renter) profile within the property management system.
+ * Represents a renter (renter) profile within the property management system.
  *
  * @package App\Models
  */
-class Tenant extends Model
+class Renter extends Model
 {
     use HasFactory, Notifiable;
 
@@ -45,7 +45,7 @@ class Tenant extends Model
     ];
 
     /**
-     * Get the tenant's combined full name.
+     * Get the renter's combined full name.
      *
      * Automatically appended to the model's array/JSON representation via the $appends array.
      *
@@ -59,7 +59,7 @@ class Tenant extends Model
     /**
      * Route notifications for the Mail channel.
      *
-     * Falls back to the tenant's direct email if no linked user account exists.
+     * Falls back to the renter's direct email if no linked user account exists.
      *
      * @return string
      */
@@ -79,7 +79,7 @@ class Tenant extends Model
     }
 
     /**
-     * Get the user (landlord/property manager) that created and manages this tenant.
+     * Get the user (landlord/property manager) that created and manages this renter.
      *
      * @return BelongsTo
      */
@@ -89,7 +89,7 @@ class Tenant extends Model
     }
 
     /**
-     * Get the lease agreements associated with this tenant.
+     * Get the lease agreements associated with this renter.
      *
      * @return HasMany
      */

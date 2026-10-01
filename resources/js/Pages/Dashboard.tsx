@@ -52,7 +52,7 @@ export default function Dashboard({
 
     const handleSendReminders = (e: React.FormEvent) => {
         e.preventDefault();
-        postReminder(route("tenants.send-reminders"), {
+        postReminder(route("renters.send-reminders"), {
             onSuccess: () => setIsReminderModalOpen(false),
         });
     };
@@ -236,7 +236,7 @@ export default function Dashboard({
                                     Recent Occupancy Activity
                                 </h2>
                                 <p className="text-xs text-slate-400 mt-0.5">
-                                    Latest tenant checks, renewals, and
+                                    Latest renter checks, renewals, and
                                     payments.
                                 </p>
                             </div>
@@ -335,7 +335,7 @@ export default function Dashboard({
                                         d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
                                     />
                                 </svg>
-                                Register New Tenant Lease
+                                Register New Renter Lease
                             </Link>
 
                             <button
@@ -494,7 +494,7 @@ export default function Dashboard({
                         </h4>
                         <p className="text-xs text-slate-500 mt-1 mb-6 leading-relaxed">
                             This will send SMS and Email notifications to all
-                            tenants with active overdue balances.
+                            renters with active overdue balances.
                         </p>
                         <div className="flex items-center justify-end gap-3">
                             <button

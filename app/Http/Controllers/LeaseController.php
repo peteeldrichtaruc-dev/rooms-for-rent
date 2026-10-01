@@ -6,7 +6,7 @@ use App\Http\Requests\StoreLeaseRequest;
 use App\Http\Requests\UpdateLeaseRequest;
 use App\Models\Lease;
 use App\Models\Room;
-use App\Models\Tenant;
+use App\Models\Renter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,11 +29,11 @@ class LeaseController extends Controller
             ->whereHas('room.property', function ($query) use ($request) {
                 $query->where('user_id', $request->user()->id);
             })
-            ->with(['room.property', 'tenant'])
+            ->with(['room.property', 'renter'])
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
-                    $q->whereHas('tenant', function ($tenantQuery) use ($search) {
-                        $tenantQuery->where('first_name', 'ilike', "%{$search}%")
+                    $q->whereHas('renter', function ($renterQuery) use ($search) {
+                        $renterQuery->where('first_name', 'ilike', "%{$search}%")
                             ->orWhere('last_name', 'ilike', "%{$search}%");
                     })
                         ->orWhereHas('room', function ($roomQuery) use ($search) {
@@ -71,14 +71,14 @@ class LeaseController extends Controller
             ->with('property:id,name')
             ->get();
 
-        // Select all registered users (acting as potential tenants)
-        $tenants = Tenant::where('user_id', $request->user()->id)
+        // Select all registered users (acting as potential renters)
+        $renters = Renter::where('user_id', $request->user()->id)
             ->select('id', 'first_name', 'last_name', 'email')
             ->get();
 
         return Inertia::render('Leases/Create', [
             'rooms' => $rooms,
-            'tenants' => $tenants,
+            'renters' => $renters,
             'selectedRoomId' => $request->query('room_id'),
         ]);
     }
@@ -112,7 +112,7 @@ class LeaseController extends Controller
         $this->authorize('view', $lease);
 
         return Inertia::render('Leases/Show', [
-            'lease' => $lease->load(['room.property', 'tenant']),
+            'lease' => $lease->load(['room.property', 'renter']),
         ]);
     }
 
@@ -131,14 +131,14 @@ class LeaseController extends Controller
             $query->where('user_id', $request->user()->id);
         })->with('property:id,name')->get();
 
-        $tenants = Tenant::where('user_id', $request->user()->id)
+        $renters = Renter::where('user_id', $request->user()->id)
             ->select('id', 'first_name', 'last_name', 'email')
             ->get();
 
         return Inertia::render('Leases/Edit', [
-            'lease' => $lease->load(['room', 'tenant']),
+            'lease' => $lease->load(['room', 'renter']),
             'rooms' => $rooms,
-            'tenants' => $tenants,
+            'renters' => $renters,
         ]);
     }
 

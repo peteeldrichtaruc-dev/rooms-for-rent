@@ -67,8 +67,8 @@ class GenerateMonthlyInvoices extends Command
                     'description' => 'Auto generated invoice #' . $invoiceNumber,
                 ]);
 
-                if ($lease->tenant) {
-                    $lease->tenant->notify(new InvoiceGeneratedNotification($invoice));
+                if ($lease->renter) {
+                    $lease->renter->notify(new InvoiceGeneratedNotification($invoice));
                 }
 
                 $generatedCount++;

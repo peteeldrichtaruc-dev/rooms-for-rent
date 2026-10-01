@@ -2,16 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\Tenant;
+use App\Models\Renter;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tenant>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Renter>
  */
-class TenantFactory extends Factory
+class RenterFactory extends Factory
 {
-    protected $model = Tenant::class;
+    protected $model = Renter::class;
 
     /**
      * Define the model's default state.

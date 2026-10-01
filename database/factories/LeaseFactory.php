@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Lease;
 use App\Models\Room;
-use App\Models\Tenant;
+use App\Models\Renter;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -29,7 +29,7 @@ class LeaseFactory extends Factory
 
         return [
             'room_id' => Room::factory(),
-            'tenant_id' => Tenant::factory(),
+            'renter_id' => Renter::factory(),
             'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate->format('Y-m-d'),
             'rent_amount' => fake()->randomElement([3500.00, 4500.00, 5500.00, 6500.00, 8000.00, 12000.00]),
@@ -42,7 +42,7 @@ class LeaseFactory extends Factory
                 ? fake()->randomElement([
                     'Standard 1-year contract signed with 2 months advance deposit.',
                     'Lease renewed for another 6-month period.',
-                    'Tenant requested early termination due to job relocation.',
+                    'Renter requested early termination due to job relocation.',
                     'Includes free water utility, electricity submetered.',
                 ])
                 : null,

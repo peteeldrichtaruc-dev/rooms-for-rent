@@ -74,9 +74,9 @@ export default function AuthenticatedLayout({
             ),
         },
         {
-            name: "Tenants",
-            href: route("tenants.index"),
-            active: route().current("tenants.*"),
+            name: "Renters",
+            href: route("renters.index"),
+            active: route().current("renters.*"),
             icon: (
                 <svg
                     className="w-5 h-5"

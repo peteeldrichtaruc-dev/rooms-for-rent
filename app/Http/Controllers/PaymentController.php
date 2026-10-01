@@ -34,14 +34,14 @@ class PaymentController extends Controller
         Stripe::setApiKey($secretKey);
 
         $roomNumber = $invoice->lease?->room?->room_number ?? 'N/A';
-        $tenantEmail = $invoice->lease?->tenant?->email ?? 'tenant@example.com';
+        $renterEmail = $invoice->lease?->renter?->email ?? 'renter@example.com';
 
         // Stripe expects amount in centavos for PHP (e.g., ₱1,500.00 -> 150000)
         $amountInCentavos = (int)round($invoice->amount * 100);
 
         try {
             $checkoutSession = StripeSession::create([
-                'customer_email' => $tenantEmail,
+                'customer_email' => $renterEmail,
                 'payment_method_types' => ['card'],
                 'line_items' => [[
                     'price_data' => [

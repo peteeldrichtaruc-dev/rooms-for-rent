@@ -4,31 +4,20 @@ import TextInput from "@/Components/TextInput";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, Link, useForm } from "@inertiajs/react";
 
-interface Tenant {
-    id: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-    emergency_contact_name?: string;
-    emergency_contact_phone?: string;
-    notes?: string;
-}
-
-export default function Edit({ tenant }: { tenant: Tenant }) {
-    const { data, setData, put, processing, errors } = useForm({
-        first_name: tenant.first_name || "",
-        last_name: tenant.last_name || "",
-        email: tenant.email || "",
-        phone: tenant.phone || "",
-        emergency_contact_name: tenant.emergency_contact_name || "",
-        emergency_contact_phone: tenant.emergency_contact_phone || "",
-        notes: tenant.notes || "",
+export default function Create() {
+    const { data, setData, post, processing, errors } = useForm({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        emergency_contact_name: "",
+        emergency_contact_phone: "",
+        notes: "",
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        put(route("tenants.update", tenant.id));
+        post(route("renters.store"));
     };
 
     return (
@@ -36,15 +25,15 @@ export default function Edit({ tenant }: { tenant: Tenant }) {
             header={
                 <div>
                     <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                        Edit Tenant
+                        Add New Renter
                     </h1>
                     <p className="text-xs text-slate-500">
-                        Update personal details or emergency contacts.
+                        Record a new renter profile.
                     </p>
                 </div>
             }
         >
-            <Head title={`Edit ${tenant.first_name}`} />
+            <Head title="Add Renter" />
 
             <div
                 className="max-w-2xl bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8"
@@ -140,13 +129,13 @@ export default function Edit({ tenant }: { tenant: Tenant }) {
 
                     <div className="pt-2 flex items-center justify-end gap-3">
                         <Link
-                            href={route("tenants.show", tenant.id)}
+                            href={route("renters.index")}
                             className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition"
                         >
                             Cancel
                         </Link>
                         <PrimaryButton isLoading={processing}>
-                            Update Tenant
+                            Save Renter
                         </PrimaryButton>
                     </div>
                 </form>

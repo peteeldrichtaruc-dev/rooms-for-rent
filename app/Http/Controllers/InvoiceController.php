@@ -39,11 +39,11 @@ class InvoiceController extends Controller
 
         $invoices = Invoice::query()
             ->where('user_id', $user->id)
-            ->with(['lease.tenant', 'lease.room.property'])
+            ->with(['lease.renter', 'lease.room.property'])
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('invoice_number', 'ilike', "%{$search}%")
-                        ->orWhereHas('lease.tenant', function ($tQuery) use ($search) {
+                        ->orWhereHas('lease.renter', function ($tQuery) use ($search) {
                             $tQuery->where('first_name', 'ilike', "%{$search}%")
                                 ->orWhere('last_name', 'ilike', "%{$search}%");
                         })
@@ -83,7 +83,7 @@ class InvoiceController extends Controller
     public function create(): Response
     {
         $leases = auth()->user()->leases()
-            ->with(['tenant', 'room.property'])
+            ->with(['renter', 'room.property'])
             ->where('status', 'active')
             ->get();
 
@@ -125,7 +125,7 @@ class InvoiceController extends Controller
     {
         $this->authorize('view', $invoice);
 
-        $invoice->load(['lease.tenant', 'lease.room.property']);
+        $invoice->load(['lease.renter', 'lease.room.property']);
 
         return Inertia::render('Invoices/Show', [
             'invoice' => $invoice,
@@ -149,7 +149,7 @@ class InvoiceController extends Controller
             $query->where('user_id', $user->id);
         })
             ->where('status', 'active')
-            ->with(['tenant', 'room'])
+            ->with(['renter', 'room'])
             ->get();
 
         if ($activeLeases->isEmpty()) {
@@ -181,9 +181,9 @@ class InvoiceController extends Controller
                 'description' => "Monthly Rent for {$now->format('F Y')}",
             ]);
 
-            // 4. Send notification (Email + SMS) to tenant
-            if ($lease->tenant) {
-                $lease->tenant->notify(new InvoiceGeneratedNotification($invoice));
+            // 4. Send notification (Email + SMS) to renter
+            if ($lease->renter) {
+                $lease->renter->notify(new InvoiceGeneratedNotification($invoice));
             }
 
             $generatedCount++;
@@ -245,7 +245,7 @@ class InvoiceController extends Controller
      */
     public function publicShow(Invoice $invoice): Response
     {
-        $invoice->load(['lease.tenant', 'lease.room.property']);
+        $invoice->load(['lease.renter', 'lease.room.property']);
 
         return Inertia::render('Invoices/PublicShow', [
             'invoice' => $invoice,
@@ -294,7 +294,7 @@ class InvoiceController extends Controller
 
         $checkoutSession = $stripe->checkout->sessions->create([
             'payment_method_types' => ['card'],
-            'customer_email' => $invoice->lease?->tenant?->email,
+            'customer_email' => $invoice->lease?->renter?->email,
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'php',

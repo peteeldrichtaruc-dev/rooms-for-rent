@@ -7,7 +7,7 @@ interface Lease {
     id: number;
 }
 
-interface Tenant {
+interface Renter {
     id: number;
     first_name: string;
     last_name: string;
@@ -17,8 +17,8 @@ interface Tenant {
     created_at: string;
 }
 
-interface PaginatedTenants {
-    data: Tenant[];
+interface PaginatedRenters {
+    data: Renter[];
     current_page: number;
     last_page: number;
     per_page: number;
@@ -33,10 +33,10 @@ interface PaginatedTenants {
 }
 
 export default function Index({
-    tenants,
+    renters,
     filters,
 }: {
-    tenants: PaginatedTenants;
+    renters: PaginatedRenters;
     filters: { search: string };
 }) {
     const [search, setSearch] = useState(filters.search || "");
@@ -45,7 +45,7 @@ export default function Index({
         () =>
             debounce((query: string) => {
                 router.get(
-                    route("tenants.index"),
+                    route("renters.index"),
                     { search: query },
                     {
                         preserveState: true,
@@ -74,23 +74,23 @@ export default function Index({
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                            Tenants Directory
+                            Renters Directory
                         </h1>
                         <p className="text-xs text-slate-500">
                             Manage contact details and active lease histories
-                            for all tenants.
+                            for all renters.
                         </p>
                     </div>
                     <Link
-                        href={route("tenants.create")}
+                        href={route("renters.create")}
                         className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-sm"
                     >
-                        + Add New Tenant
+                        + Add New Renter
                     </Link>
                 </div>
             }
         >
-            <Head title="Tenants" />
+            <Head title="Renters" />
 
             <div className="space-y-6">
                 {/* Search Bar */}
@@ -113,14 +113,14 @@ export default function Index({
                             type="search"
                             value={search}
                             onChange={handleSearchChange}
-                            placeholder="Search tenants by name, email, or phone..."
+                            placeholder="Search renters by name, email, or phone..."
                             className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                         />
                     </div>
-                    {tenants.total > 0 && (
+                    {renters.total > 0 && (
                         <span className="text-xs font-medium text-slate-400">
-                            Showing {tenants.from}–{tenants.to} of{" "}
-                            {tenants.total} tenants
+                            Showing {renters.from}–{renters.to} of{" "}
+                            {renters.total} renters
                         </span>
                     )}
                 </div>
@@ -131,7 +131,7 @@ export default function Index({
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                                    <th className="py-3.5 px-6">Tenant Name</th>
+                                    <th className="py-3.5 px-6">Renter Name</th>
                                     <th className="py-3.5 px-6">
                                         Email Address
                                     </th>
@@ -147,43 +147,44 @@ export default function Index({
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-                                {tenants.data.length === 0 ? (
+                                {renters.data.length === 0 ? (
                                     <tr>
                                         <td
                                             colSpan={5}
                                             className="py-12 text-center text-slate-400"
                                         >
-                                            No tenants found matching "
-                                            {filters.search}".
+                                            {filters.search
+                                                ? `No renters found matching "${filters.search}".`
+                                                : "No renters recorded yet."}
                                         </td>
                                     </tr>
                                 ) : (
-                                    tenants.data.map((tenant) => (
+                                    renters.data.map((renter) => (
                                         <tr
-                                            key={tenant.id}
+                                            key={renter.id}
                                             className="hover:bg-slate-50/80 transition"
                                         >
                                             <td className="py-4 px-6 font-bold text-slate-900">
-                                                {tenant.first_name}{" "}
-                                                {tenant.last_name}
+                                                {renter.first_name}{" "}
+                                                {renter.last_name}
                                             </td>
                                             <td className="py-4 px-6 text-slate-600">
-                                                {tenant.email || "—"}
+                                                {renter.email || "—"}
                                             </td>
                                             <td className="py-4 px-6 text-slate-600">
-                                                {tenant.phone || "—"}
+                                                {renter.phone || "—"}
                                             </td>
                                             <td className="py-4 px-6 text-center">
                                                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold text-blue-700 bg-blue-50 border border-blue-100">
-                                                    {tenant.leases_count ?? 0}{" "}
+                                                    {renter.leases_count ?? 0}{" "}
                                                     Leases
                                                 </span>
                                             </td>
                                             <td className="py-4 px-6 text-right space-x-2">
                                                 <Link
                                                     href={route(
-                                                        "tenants.show",
-                                                        tenant.id,
+                                                        "renters.show",
+                                                        renter.id,
                                                     )}
                                                     className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition"
                                                 >
@@ -191,8 +192,8 @@ export default function Index({
                                                 </Link>
                                                 <Link
                                                     href={route(
-                                                        "tenants.edit",
-                                                        tenant.id,
+                                                        "renters.edit",
+                                                        renter.id,
                                                     )}
                                                     className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg transition"
                                                 >
@@ -207,14 +208,14 @@ export default function Index({
                     </div>
 
                     {/* Pagination */}
-                    {tenants.total > tenants.per_page && (
+                    {renters.total > renters.per_page && (
                         <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
                             <span className="text-xs text-slate-500">
-                                Page {tenants.current_page} of{" "}
-                                {tenants.last_page}
+                                Page {renters.current_page} of{" "}
+                                {renters.last_page}
                             </span>
                             <div className="flex items-center gap-1">
-                                {tenants.links.map((link, index) => (
+                                {renters.links.map((link, index) => (
                                     <Link
                                         key={index}
                                         href={link.url || "#"}
