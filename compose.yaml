@@ -6,6 +6,7 @@ services:
         container_name: rooms_app
         restart: unless-stopped
         working_dir: /var/www/html
+        command: php-fpm
         ports:
             - "5173:5173"
         volumes:
@@ -13,8 +14,16 @@ services:
         networks:
             - rooms-network
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        healthcheck:
+            test: [ "CMD-SHELL", "php-fpm -t || exit 1" ]
+            interval: 5s
+            timeout: 3s
+            retries: 5
+            start_period: 10s
 
     scheduler:
         build:
@@ -29,9 +38,10 @@ services:
         networks:
             - rooms-network
         depends_on:
-            - app
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
 
     queue:
         build:
@@ -46,9 +56,10 @@ services:
         networks:
             - rooms-network
         depends_on:
-            - app
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
 
     webserver:
         image: nginx:alpine
@@ -78,6 +89,12 @@ services:
             - postgres_data:/var/lib/postgresql/data
         networks:
             - rooms-network
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_DATABASE:-rooms_for_rent}" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+            start_period: 5s
 
     redis:
         image: redis:alpine
@@ -89,6 +106,12 @@ services:
             - redis_data:/data
         networks:
             - rooms-network
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 5s
+            timeout: 3s
+            retries: 5
+            start_period: 5s
 
 networks:
     rooms-network:
