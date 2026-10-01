@@ -13,17 +13,11 @@ class RenterSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get the primary landlord user or create one
-        $user = User::first() ?? User::factory()->create([
-            'name' => 'Admin Landlord',
-            'email' => 'admin@example.com',
-        ]);
+        $users = User::all();
 
-        // Seed 50 renters attached to the landlord user
         Renter::factory()
             ->count(50)
-            ->create([
-                'user_id' => $user->id,
-            ]);
+            ->recycle($users)
+            ->create();
     }
 }
