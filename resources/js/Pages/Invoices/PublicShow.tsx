@@ -97,7 +97,7 @@ export default function PublicShow({
                             Due Date
                         </p>
                         <p className="text-xs font-bold text-slate-800 mt-1">
-                            {invoice.status}
+                            {invoice.due_date}
                         </p>
                     </div>
                 </div>

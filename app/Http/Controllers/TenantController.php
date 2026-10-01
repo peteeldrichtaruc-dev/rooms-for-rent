@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTenantRequest;
 use App\Http\Requests\UpdateTenantRequest;
 use App\Models\Tenant;
+use App\Notifications\InvoiceGeneratedNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -50,6 +52,45 @@ class TenantController extends Controller
                 'search' => $search,
             ],
         ]);
+    }
+
+    /**
+     * Dispatch payment & overdue reminders to active tenants with pending balances.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function sendBulkReminders(Request $request): RedirectResponse
+    {
+        $tenantsWithOverdueInvoices = Tenant::whereHas('leases.invoices', function ($query) {
+            $query->where('status', 'unpaid')
+                ->where('due_date', '<=', now());
+        })->with(['leases.invoices' => function ($query) {
+            $query->where('status', 'unpaid')
+                ->where('due_date', '<=', now());
+        }])->get();
+
+        if ($tenantsWithOverdueInvoices->isEmpty()) {
+            return redirect()->back()->with('info', 'No tenants currently have overdue invoices.');
+        }
+
+        $sentCount = 0;
+
+        foreach ($tenantsWithOverdueInvoices as $tenant) {
+            foreach ($tenant->leases as $lease) {
+                foreach ($lease->invoices as $invoice) {
+                    $tenant->notify(new InvoiceGeneratedNotification($invoice));
+                }
+            }
+            $sentCount++;
+        }
+
+        Log::info('Bulk payment reminders dispatched', [
+            'triggered_by' => $request->user()->id,
+            'recipients_count' => $sentCount,
+        ]);
+
+        return redirect()->back()->with('success', "Dispatched payment reminders to {$sentCount} tenant(s).");
     }
 
     /**

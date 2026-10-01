@@ -134,15 +134,17 @@ class InvoiceController extends Controller
 
     /**
      * Generate monthly invoices for all active leases belonging to the landlord.
+     *
+     * @param Request $request
+     * @return RedirectResponse
      */
-    public function generateMonthly(Request $request)
+    public function generateMonthly(Request $request): RedirectResponse
     {
         $user = $request->user();
         $now = Carbon::now();
         $startOfMonth = $now->copy()->startOfMonth();
         $endOfMonth = $now->copy()->endOfMonth();
 
-        // 1. Fetch active leases belonging to landlord's properties
         $activeLeases = Lease::whereHas('room.property', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
@@ -201,7 +203,7 @@ class InvoiceController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws ApiErrorException
      */
-    public function checkout(Invoice $invoice)
+    public function checkout(Invoice $invoice): \Symfony\Component\HttpFoundation\Response
     {
         $this->authorize('view', $invoice);
 
@@ -259,26 +261,35 @@ class InvoiceController extends Controller
      * Initiate Stripe Checkout from a public signed URL.
      *
      * @param Invoice $invoice
-     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response|Response
      * @throws ApiErrorException
      */
-    public function publicCheckout(Invoice $invoice)
+    public function publicCheckout(Invoice $invoice): \Symfony\Component\HttpFoundation\Response|Response
     {
         if ($invoice->status === 'paid') {
-            return redirect()->back()->with('error', 'This invoice has already been paid.');
+            return Inertia::render('Public/CheckoutPaid', [
+                'invoiceNumber' => $invoice->invoice_number,
+                'amount' => $invoice->amount,
+                'paidAt' => $invoice->updated_at->format('M d, Y h:i A'),
+            ]);
         }
 
         $stripe = new StripeClient(config('services.stripe.secret'));
 
-        // Pass additional parameters inside the route parameter array so Laravel signs them properly
-        $successUrl = URL::signedRoute('invoices.public-show', [
-            'invoice' => $invoice->id,
-            'payment' => 'success',
+        // Generate signed URLs so public outcome routes remain secure
+        $signedSuccessUrl = URL::signedRoute('checkout.success', [
+            'invoice_number' => $invoice->invoice_number,
         ]);
 
-        $cancelUrl = URL::signedRoute('invoices.public-show', [
-            'invoice' => $invoice->id,
-            'payment' => 'cancelled',
+        $successUrl = $signedSuccessUrl . '&session_id={CHECKOUT_SESSION_ID}';
+
+        $cancelUrl = URL::signedRoute('checkout.cancel', [
+            'invoice_id' => $invoice->id,
+            'checkout_url' => URL::temporarySignedRoute(
+                'invoices.public-show',
+                now()->addDays(7),
+                ['invoice' => $invoice->id]
+            ),
         ]);
 
         $checkoutSession = $stripe->checkout->sessions->create([

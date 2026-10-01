@@ -7,6 +7,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -49,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Tenants
     Route::resource('tenants', TenantController::class);
+    Route::post('/tenants/send-reminders', [TenantController::class, 'sendBulkReminders'])
+        ->middleware('throttle:notifications')
+        ->name('tenants.send-reminders');
 
     // Invoices
     Route::resource('invoices', InvoiceController::class);
@@ -57,7 +61,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('invoices/{invoice}/checkout', [InvoiceController::class, 'checkout'])
         ->name('invoices.checkout');
     Route::post('/invoices/generate-monthly', [InvoiceController::class, 'generateMonthly'])
-        ->name('invoices.generate-monthly');
+        ->name('invoices.generate-monthly')
+        ->middleware('throttle:billing-actions');
 });
 
 // Tenant Public Signed Routes (No Auth Required)
@@ -67,5 +72,8 @@ Route::middleware(['signed'])->group(function () {
     Route::post('/pay/{invoice}/checkout', [InvoiceController::class, 'publicCheckout'])
         ->name('invoices.public-checkout');
 });
+
+Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 
 require __DIR__ . '/auth.php';
