@@ -136,7 +136,7 @@ export default function AuthenticatedLayout({
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white">
+        <div className="min-h-screen bg-slate-50 text-slate-900 flex font-sans antialiased selection:bg-blue-500 selection:text-white">
             {/* Mobile Sidebar Overlay */}
             {isSidebarOpen && (
                 <div
@@ -148,12 +148,12 @@ export default function AuthenticatedLayout({
             {/* Sidebar Navigation */}
             <aside
                 className={`
-                    fixed top-0 bottom-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col transition-transform duration-200 ease-in-out
+                    fixed md:sticky top-0 left-0 z-50 md:z-auto w-64 h-screen shrink-0 bg-slate-900 text-slate-300 flex flex-col transition-transform duration-200 ease-in-out self-start
                     ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
                 `}
             >
                 {/* Brand Logo */}
-                <div className="h-16 flex items-center px-6 border-b border-slate-800">
+                <div className="h-16 flex items-center px-6 border-b border-slate-800 shrink-0">
                     <Link href="/" className="flex items-center gap-2.5 group">
                         <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-black text-lg shadow-sm">
                             R
@@ -189,7 +189,7 @@ export default function AuthenticatedLayout({
                 </nav>
 
                 {/* Sidebar Bottom Profile Summary */}
-                <div className="p-4 border-t border-slate-800">
+                <div className="p-4 border-t border-slate-800 shrink-0">
                     <div className="flex items-center gap-3 px-2 py-2">
                         <div className="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold text-sm">
                             {user.name.charAt(0)}
@@ -207,9 +207,9 @@ export default function AuthenticatedLayout({
             </aside>
 
             {/* Main Layout Area */}
-            <div className="md:pl-64 flex-1 flex flex-col min-w-0">
+            <div className="flex-1 flex flex-col min-w-0">
                 {/* Top Header Navbar */}
-                <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between">
+                <header className="sticky top-0 z-30 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between shrink-0">
                     {/* Mobile Hamburger Button */}
                     <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
