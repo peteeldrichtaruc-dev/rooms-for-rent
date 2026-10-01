@@ -6,7 +6,7 @@ export default function Welcome({
 }: PageProps<{ laravelVersion: string; phpVersion: string }>) {
     return (
         <>
-            <Head title="RoomsForRent - Multi-Tenant Property & Lease Management SaaS" />
+            <Head title="Multi-Tenant Property & Lease Management SaaS" />
 
             <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-500 selection:text-white">
                 {/* Top Navigation */}

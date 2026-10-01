@@ -28,7 +28,7 @@ export default function ResetPassword({
 
     return (
         <GuestLayout>
-            <Head title="Reset Password - RoomsForRent" />
+            <Head title="Reset Password" />
 
             <div className="mb-6">
                 <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">

@@ -22,7 +22,7 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Create Account - RoomsForRent" />
+            <Head title="Create Account" />
 
             <div className="mb-6">
                 <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">

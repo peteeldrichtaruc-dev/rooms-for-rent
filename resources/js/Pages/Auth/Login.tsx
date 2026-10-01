@@ -28,7 +28,7 @@ export default function Login({
 
     return (
         <GuestLayout>
-            <Head title="Log in - RoomsForRent" />
+            <Head title="Log in" />
 
             <div className="mb-6">
                 <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
