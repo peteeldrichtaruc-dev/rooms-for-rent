@@ -13,7 +13,7 @@ interface Room {
     };
 }
 
-interface Tenant {
+interface Renter {
     id: number;
     name: string;
     email: string;
@@ -21,11 +21,11 @@ interface Tenant {
 
 export default function Create({
     rooms,
-    tenants,
+    renters,
     selectedRoomId,
 }: {
     rooms: Room[];
-    tenants: Tenant[];
+    renters: Renter[];
     selectedRoomId?: string;
 }) {
     const initialRoom =
@@ -33,7 +33,7 @@ export default function Create({
 
     const { data, setData, post, processing, errors } = useForm({
         room_id: selectedRoomId || (rooms[0]?.id.toString() ?? ""),
-        tenant_id: tenants[0]?.id.toString() ?? "",
+        renter_id: renters[0]?.id.toString() ?? "",
         start_date: new Date().toISOString().split("T")[0],
         end_date: "",
         rent_amount: initialRoom ? initialRoom.price.toString() : "",
@@ -64,8 +64,7 @@ export default function Create({
                         New Lease Agreement
                     </h1>
                     <p className="text-xs text-slate-500">
-                        Assign a tenant to an available unit and define rental
-                        terms.
+                        Assign a renter to an available unit and define rental terms.
                     </p>
                 </div>
             }
@@ -105,24 +104,24 @@ export default function Create({
 
                         <div>
                             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                                Tenant
+                                Renter
                             </label>
                             <select
-                                value={data.tenant_id}
+                                value={data.renter_id}
                                 onChange={(e) =>
-                                    setData("tenant_id", e.target.value)
+                                    setData("renter_id", e.target.value)
                                 }
                                 className="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 text-xs text-slate-800 transition"
                             >
-                                {tenants.map((t) => (
-                                    <option key={t.id} value={t.id}>
-                                        {t.name} ({t.email})
+                                {renters.map((r) => (
+                                    <option key={r.id} value={r.id}>
+                                        {r.name} ({r.email})
                                     </option>
                                 ))}
                             </select>
-                            {errors.tenant_id && (
+                            {errors.renter_id && (
                                 <p className="mt-1 text-xs text-red-600 font-medium">
-                                    {errors.tenant_id}
+                                    {errors.renter_id}
                                 </p>
                             )}
                         </div>
@@ -140,7 +139,6 @@ export default function Create({
                             error={errors.start_date}
                             required
                         />
-
                         <TextInput
                             label="End Date (Optional)"
                             id="end_date"
@@ -166,7 +164,6 @@ export default function Create({
                             error={errors.rent_amount}
                             required
                         />
-
                         <TextInput
                             label="Security Deposit (₱)"
                             id="deposit_amount"

@@ -67,14 +67,14 @@ class DashboardController extends Controller
         $recentPayments = Invoice::query()
             ->whereHas('lease.room.property', fn($q) => $q->where('user_id', $userId))
             ->where('status', 'paid')
-            ->with(['lease.tenant:id,first_name,last_name', 'lease.room:id,room_number'])
+            ->with(['lease.renter:id,first_name,last_name', 'lease.room:id,room_number'])
             ->latest('paid_at')
             ->take(3)
             ->get();
 
         $recentLeases = Lease::query()
             ->whereHas('room.property', fn($q) => $q->where('user_id', $userId))
-            ->with(['tenant:id,first_name,last_name', 'room:id,room_number'])
+            ->with(['renter:id,first_name,last_name', 'room:id,room_number'])
             ->latest('created_at')
             ->take(3)
             ->get();
@@ -86,7 +86,7 @@ class DashboardController extends Controller
                 'id' => 'pay-' . $payment->id,
                 'type' => 'payment',
                 'title' => 'Room ' . ($payment->lease?->room?->room_number ?? 'N/A') . ' — Payment Received',
-                'subtitle' => 'Tenant: ' . ($payment->lease?->tenant?->first_name ?? '') . ' ' . ($payment->lease?->tenant?->last_name ?? '') . ' • ₱' . number_format($payment->amount, 2),
+                'subtitle' => 'Renter: ' . ($payment->lease?->renter?->first_name ?? '') . ' ' . ($payment->lease?->renter?->last_name ?? '') . ' • ₱' . number_format($payment->amount, 2),
                 'timestamp' => $payment->paid_at ? $payment->paid_at->diffForHumans() : $payment->updated_at->diffForHumans(),
                 'sort_date' => $payment->paid_at ?? $payment->updated_at,
             ]);
@@ -97,7 +97,7 @@ class DashboardController extends Controller
                 'id' => 'lease-' . $lease->id,
                 'type' => 'lease',
                 'title' => 'New Lease Signed — Room ' . ($lease->room?->room_number ?? 'N/A'),
-                'subtitle' => 'Tenant: ' . ($lease->tenant?->first_name ?? '') . ' ' . ($lease->tenant?->last_name ?? ''),
+                'subtitle' => 'Renter: ' . ($lease->renter?->first_name ?? '') . ' ' . ($lease->renter?->last_name ?? ''),
                 'timestamp' => $lease->created_at->diffForHumans(),
                 'sort_date' => $lease->created_at,
             ]);

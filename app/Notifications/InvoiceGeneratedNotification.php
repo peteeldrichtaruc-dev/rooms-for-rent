@@ -46,7 +46,7 @@ class InvoiceGeneratedNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Generate a 30-day signed payment link for public tenant access.
+     * Generate a 30-day signed payment link for public renter access.
      *
      * @return string
      */
@@ -67,7 +67,7 @@ class InvoiceGeneratedNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $tenantName = $this->invoice->lease?->tenant?->first_name ?? 'Valued Tenant';
+        $renterName = $this->invoice->lease?->renter?->first_name ?? 'Valued Renter';
         $roomNumber = $this->invoice->lease?->room?->room_number ?? 'N/A';
         $formattedAmount = number_format($this->invoice->amount, 2);
         $dueDate = $this->invoice->due_date ? $this->invoice->due_date->format('F j, Y') : 'Due on receipt';
@@ -75,7 +75,7 @@ class InvoiceGeneratedNotification extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject("New Invoice #{$this->invoice->id} for Room {$roomNumber}")
-            ->greeting("Hello {$tenantName},")
+            ->greeting("Hello {$renterName},")
             ->line("Your monthly rent invoice for Room {$roomNumber} has been generated.")
             ->line("Amount Due: ₱{$formattedAmount}")
             ->line("Due Date: {$dueDate}")

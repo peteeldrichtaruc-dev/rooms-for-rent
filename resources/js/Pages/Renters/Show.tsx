@@ -19,7 +19,7 @@ interface Lease {
     room: Room;
 }
 
-interface Tenant {
+interface Renter {
     id: number;
     full_name: string;
     first_name: string;
@@ -32,10 +32,10 @@ interface Tenant {
     leases: Lease[];
 }
 
-export default function Show({ tenant }: { tenant: Tenant }) {
+export default function Show({ renter }: { renter: Renter }) {
     const handleDelete = () => {
-        if (confirm("Are you sure you want to delete this tenant record?")) {
-            router.delete(route("tenants.destroy", tenant.id));
+        if (confirm("Are you sure you want to delete this renter record?")) {
+            router.delete(route("renters.destroy", renter.id));
         }
     };
 
@@ -45,13 +45,13 @@ export default function Show({ tenant }: { tenant: Tenant }) {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                            {tenant.full_name}
+                            {renter.full_name}
                         </h1>
-                        <p className="text-xs text-slate-500">{tenant.email}</p>
+                        <p className="text-xs text-slate-500">{renter.email}</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <Link
-                            href={route("tenants.edit", tenant.id)}
+                            href={route("renters.edit", renter.id)}
                             className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition"
                         >
                             Edit Profile
@@ -66,7 +66,7 @@ export default function Show({ tenant }: { tenant: Tenant }) {
                 </div>
             }
         >
-            <Head title={`${tenant.full_name}`} />
+            <Head title={`${renter.full_name}`} />
 
             <div className="max-w-4xl space-y-6" data-aos="fade-up">
                 {/* Information Grid */}
@@ -80,13 +80,13 @@ export default function Show({ tenant }: { tenant: Tenant }) {
                             <p className="text-xs text-slate-500">
                                 Email:{" "}
                                 <span className="font-semibold text-slate-900">
-                                    {tenant.email}
+                                    {renter.email}
                                 </span>
                             </p>
                             <p className="text-xs text-slate-500">
                                 Phone:{" "}
                                 <span className="font-semibold text-slate-900">
-                                    {tenant.phone}
+                                    {renter.phone}
                                 </span>
                             </p>
                         </div>
@@ -97,18 +97,18 @@ export default function Show({ tenant }: { tenant: Tenant }) {
                         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                             Emergency Contact
                         </h3>
-                        {tenant.emergency_contact_name ? (
+                        {renter.emergency_contact_name ? (
                             <div className="space-y-1">
                                 <p className="text-xs text-slate-500">
                                     Name:{" "}
                                     <span className="font-semibold text-slate-900">
-                                        {tenant.emergency_contact_name}
+                                        {renter.emergency_contact_name}
                                     </span>
                                 </p>
                                 <p className="text-xs text-slate-500">
                                     Phone:{" "}
                                     <span className="font-semibold text-slate-900">
-                                        {tenant.emergency_contact_phone ||
+                                        {renter.emergency_contact_phone ||
                                             "N/A"}
                                     </span>
                                 </p>
@@ -141,17 +141,17 @@ export default function Show({ tenant }: { tenant: Tenant }) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {!tenant.leases || tenant.leases.length === 0 ? (
+                            {!renter.leases || renter.leases.length === 0 ? (
                                 <tr>
                                     <td
                                         colSpan={5}
                                         className="px-6 py-6 text-center text-slate-400"
                                     >
-                                        No leases linked to this tenant yet.
+                                        No leases linked to this renter yet.
                                     </td>
                                 </tr>
                             ) : (
-                                tenant.leases.map((lease) => (
+                                renter.leases.map((lease) => (
                                     <tr
                                         key={lease.id}
                                         className="hover:bg-slate-50/50 transition"

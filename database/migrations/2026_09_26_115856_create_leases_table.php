@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('leases', function (Blueprint $table) {
             $table->id();
             $table->foreignId('room_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('renter_id')->constrained()->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->decimal('rent_amount', 10, 2);
@@ -24,7 +24,7 @@ return new class extends Migration {
 
             // Index for querying active leases quickly
             $table->index(['room_id', 'status']);
-            $table->index(['tenant_id', 'status']);
+            $table->index(['renter_id', 'status']);
         });
     }
 

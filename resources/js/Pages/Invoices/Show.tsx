@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 
-interface Tenant {
+interface Renter {
     id: number;
     first_name: string;
     last_name: string;
@@ -20,7 +20,7 @@ interface Room {
 
 interface Lease {
     id: number;
-    tenant: Tenant;
+    renter: Renter;
     room: Room;
 }
 
@@ -77,10 +77,9 @@ export default function Show({ invoice }: { invoice: Invoice }) {
                             </span>
                         </div>
                         <p className="text-xs text-slate-500">
-                            Billing Statement details and tenant info.
+                            Billing Statement details and renter info.
                         </p>
                     </div>
-
                     <div className="flex items-center gap-2 flex-wrap">
                         {invoice.status !== "paid" && (
                             <>
@@ -168,17 +167,16 @@ export default function Show({ invoice }: { invoice: Invoice }) {
                                 Billed To
                             </h3>
                             <p className="text-sm font-bold text-slate-900">
-                                {invoice.lease?.tenant?.first_name}{" "}
-                                {invoice.lease?.tenant?.last_name}
+                                {invoice.lease?.renter?.first_name}{" "}
+                                {invoice.lease?.renter?.last_name}
                             </p>
                             <p className="text-xs text-slate-500">
-                                {invoice.lease?.tenant?.email}
+                                {invoice.lease?.renter?.email}
                             </p>
                             <p className="text-xs text-slate-500">
-                                {invoice.lease?.tenant?.phone}
+                                {invoice.lease?.renter?.phone}
                             </p>
                         </div>
-
                         <div>
                             <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
                                 Rental Unit
@@ -220,7 +218,7 @@ export default function Show({ invoice }: { invoice: Invoice }) {
                                         </div>
                                     </td>
                                     <td className="px-5 py-4 text-right font-extrabold text-slate-900">
-                                        ₱
+                                        ₱{" "}
                                         {Number(
                                             invoice.amount,
                                         ).toLocaleString()}
@@ -233,7 +231,7 @@ export default function Show({ invoice }: { invoice: Invoice }) {
                                         Total Due:
                                     </td>
                                     <td className="px-5 py-3.5 font-black text-slate-900 text-right text-sm">
-                                        ₱
+                                        ₱{" "}
                                         {Number(
                                             invoice.amount,
                                         ).toLocaleString()}

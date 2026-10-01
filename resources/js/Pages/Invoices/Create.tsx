@@ -4,7 +4,7 @@ import TextInput from "@/Components/TextInput";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { Head, Link, useForm } from "@inertiajs/react";
 
-interface Tenant {
+interface Renter {
     id: number;
     first_name: string;
     last_name: string;
@@ -22,7 +22,7 @@ interface Room {
 interface Lease {
     id: number;
     rent_amount: number;
-    tenant: Tenant;
+    renter: Renter;
     room: Room;
 }
 
@@ -62,7 +62,7 @@ export default function Create({ leases }: { leases: Lease[] }) {
                         Generate Invoice
                     </h1>
                     <p className="text-xs text-slate-500">
-                        Create a billing statement for an active tenant lease.
+                        Create a billing statement for an active renter lease.
                     </p>
                 </div>
             }
@@ -90,7 +90,7 @@ export default function Create({ leases }: { leases: Lease[] }) {
                     <form onSubmit={submit} className="space-y-5">
                         <div>
                             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                                Select Active Lease / Tenant
+                                Select Active Lease / Renter
                             </label>
                             <select
                                 value={data.lease_id}
@@ -101,8 +101,8 @@ export default function Create({ leases }: { leases: Lease[] }) {
                             >
                                 {leases.map((lease) => (
                                     <option key={lease.id} value={lease.id}>
-                                        {lease.tenant?.first_name}{" "}
-                                        {lease.tenant?.last_name} —{" "}
+                                        {lease.renter?.first_name}{" "}
+                                        {lease.renter?.last_name} —{" "}
                                         {lease.room?.property?.name} (Room{" "}
                                         {lease.room?.room_number})
                                     </option>

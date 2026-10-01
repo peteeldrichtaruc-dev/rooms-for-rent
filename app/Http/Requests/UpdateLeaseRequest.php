@@ -25,7 +25,7 @@ class UpdateLeaseRequest extends FormRequest
     {
         return [
             'room_id' => ['required', 'exists:rooms,id'],
-            'tenant_id' => ['required', 'exists:tenants,id'],
+            'renter_id' => ['required', 'exists:renters,id'],
             'start_date' => ['required', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'rent_amount' => ['required', 'numeric', 'min:0'],

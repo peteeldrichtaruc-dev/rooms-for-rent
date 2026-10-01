@@ -16,36 +16,51 @@ export default function VerifyEmail({ status }: { status?: string }) {
         <GuestLayout>
             <Head title="Email Verification" />
 
-            <div className="mb-4 text-sm text-gray-600">
-                Thanks for signing up! Before getting started, could you verify
-                your email address by clicking on the link we just emailed to
-                you? If you didn't receive the email, we will gladly send you
-                another.
-            </div>
-
-            {status === "verification-link-sent" && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    A new verification link has been sent to the email address
-                    you provided during registration.
+            <div className="space-y-6" data-aos="fade-up">
+                {/* Header Badge & Title */}
+                <div className="text-center">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-blue-700 bg-blue-50 border border-blue-100 uppercase tracking-wider mb-3">
+                        Account Security
+                    </span>
+                    <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                        Verify Your Email
+                    </h1>
+                    <p className="mt-2 text-xs text-slate-500 leading-relaxed">
+                        Thanks for signing up! Before getting started, please
+                        verify your email address by clicking the link we just
+                        sent you.
+                    </p>
                 </div>
-            )}
 
-            <form onSubmit={submit}>
-                <div className="mt-4 flex items-center justify-between">
-                    <PrimaryButton disabled={processing}>
+                {/* Status Alert */}
+                {status === "verification-link-sent" && (
+                    <div className="p-3.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs font-semibold text-emerald-700 text-center">
+                        A new verification link has been sent to your registered
+                        email address.
+                    </div>
+                )}
+
+                {/* Action Form */}
+                <form onSubmit={submit} className="space-y-4 pt-2">
+                    <PrimaryButton
+                        isLoading={processing}
+                        className="w-full justify-center"
+                    >
                         Resend Verification Email
                     </PrimaryButton>
 
-                    <Link
-                        href={route("logout")}
-                        method="post"
-                        as="button"
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Log Out
-                    </Link>
-                </div>
-            </form>
+                    <div className="text-center pt-2">
+                        <Link
+                            href={route("logout")}
+                            method="post"
+                            as="button"
+                            className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition focus:outline-none"
+                        >
+                            Log Out
+                        </Link>
+                    </div>
+                </form>
+            </div>
         </GuestLayout>
     );
 }

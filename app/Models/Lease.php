@@ -18,7 +18,7 @@ class Lease extends Model
      */
     protected $fillable = [
         'room_id',
-        'tenant_id',
+        'renter_id',
         'start_date',
         'end_date',
         'rent_amount',
@@ -50,13 +50,13 @@ class Lease extends Model
     }
 
     /**
-     * Get the tenant associated with the lease.
+     * Get the renter associated with the lease.
      *
      * @return BelongsTo
      */
-    public function tenant(): BelongsTo
+    public function renter(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class, 'tenant_id');
+        return $this->belongsTo(Renter::class, 'renter_id');
     }
 
     /**

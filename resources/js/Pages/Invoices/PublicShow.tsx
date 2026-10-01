@@ -11,7 +11,7 @@ interface Invoice {
     payment_method?: string;
     description?: string;
     lease?: {
-        tenant?: {
+        renter?: {
             first_name: string;
             last_name: string;
             email?: string;
@@ -31,7 +31,7 @@ export default function PublicShow({
     invoice: Invoice;
     checkoutUrl: string;
 }) {
-    const tenant = invoice.lease?.tenant;
+    const renter = invoice.lease?.renter;
     const room = invoice.lease?.room;
 
     const handlePayNow = () => {
@@ -57,23 +57,23 @@ export default function PublicShow({
                     </p>
                 </div>
 
-                {/* Tenant Information Card */}
-                {tenant && (
+                {/* Renter Information Card */}
+                {renter && (
                     <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-1">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                             Billed To
                         </p>
                         <p className="text-sm font-bold text-slate-800">
-                            {tenant.first_name} {tenant.last_name}
+                            {renter.first_name} {renter.last_name}
                         </p>
-                        {tenant.email && (
+                        {renter.email && (
                             <p className="text-xs text-slate-500">
-                                {tenant.email}
+                                {renter.email}
                             </p>
                         )}
-                        {tenant.phone && (
+                        {renter.phone && (
                             <p className="text-xs text-slate-500">
-                                {tenant.phone}
+                                {renter.phone}
                             </p>
                         )}
                     </div>
@@ -86,7 +86,7 @@ export default function PublicShow({
                             Amount Due
                         </p>
                         <p className="text-2xl font-black text-slate-900 mt-0.5">
-                            ₱
+                            ₱{" "}
                             {Number(invoice.amount).toLocaleString("en-US", {
                                 minimumFractionDigits: 2,
                             })}

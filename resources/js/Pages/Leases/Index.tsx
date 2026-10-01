@@ -14,7 +14,7 @@ interface Room {
     property: Property;
 }
 
-interface Tenant {
+interface Renter {
     id: number;
     first_name: string;
     last_name: string;
@@ -28,7 +28,7 @@ interface Lease {
     end_date: string;
     status: "active" | "expired" | "terminated" | "pending";
     room: Room;
-    tenant: Tenant;
+    renter: Renter;
     created_at: string;
 }
 
@@ -136,8 +136,7 @@ export default function Index({
                             Lease Agreements
                         </h1>
                         <p className="text-xs text-slate-500">
-                            Manage tenant occupancy, rental rates, and lease
-                            terms.
+                            Manage renter occupancy, rental rates, and lease terms.
                         </p>
                     </div>
                     <Link
@@ -172,7 +171,7 @@ export default function Index({
                             type="search"
                             value={search}
                             onChange={handleSearchChange}
-                            placeholder="Search leases by tenant, room, or property..."
+                            placeholder="Search leases by renter, room, or property..."
                             className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                         />
                     </div>
@@ -190,7 +189,7 @@ export default function Index({
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                                    <th className="py-3.5 px-6">Tenant</th>
+                                    <th className="py-3.5 px-6">Renter</th>
                                     <th className="py-3.5 px-6">
                                         Property / Room
                                     </th>
@@ -222,8 +221,8 @@ export default function Index({
                                             className="hover:bg-slate-50/80 transition"
                                         >
                                             <td className="py-4 px-6 font-bold text-slate-900">
-                                                {lease.tenant
-                                                    ? `${lease.tenant.first_name} ${lease.tenant.last_name}`
+                                                {lease.renter
+                                                    ? `${lease.renter.first_name} ${lease.renter.last_name}`
                                                     : "—"}
                                             </td>
                                             <td className="py-4 px-6">
@@ -238,7 +237,7 @@ export default function Index({
                                                 </div>
                                             </td>
                                             <td className="py-4 px-6 font-semibold text-slate-800">
-                                                ₱
+                                                ₱{" "}
                                                 {Number(
                                                     lease.rent_amount,
                                                 ).toLocaleString()}
@@ -290,13 +289,12 @@ export default function Index({
                                         href={link.url || "#"}
                                         preserveState
                                         preserveScroll
-                                        className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
-                                            link.active
+                                        className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${link.active
                                                 ? "bg-blue-600 text-white"
                                                 : link.url
-                                                  ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
-                                                  : "text-slate-300 pointer-events-none"
-                                        }`}
+                                                    ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-100"
+                                                    : "text-slate-300 pointer-events-none"
+                                            }`}
                                         dangerouslySetInnerHTML={{
                                             __html: link.label,
                                         }}

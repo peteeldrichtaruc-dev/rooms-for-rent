@@ -23,7 +23,7 @@ class SendBillingAndLeaseReminders extends Command
      *
      * @var string
      */
-    protected $description = 'Send overdue invoice alerts and 30-day lease expiration notices to tenants and landlords';
+    protected $description = 'Send overdue invoice alerts and 30-day lease expiration notices to renters and landlords';
 
     /**
      * Execute the console command.
@@ -33,7 +33,7 @@ class SendBillingAndLeaseReminders extends Command
         $this->info('Processing billing and lease reminders...');
 
         // 1. Process and notify overdue invoices
-        $overdueInvoices = Invoice::with(['lease.tenant', 'lease.room.property.user'])
+        $overdueInvoices = Invoice::with(['lease.renter', 'lease.room.property.user'])
             ->where('status', 'pending')
             ->where('due_date', '<', now()->startOfDay())
             ->get();
@@ -41,9 +41,9 @@ class SendBillingAndLeaseReminders extends Command
         foreach ($overdueInvoices as $invoice) {
             $invoice->update(['status' => 'overdue']);
 
-            // Notify Tenant
-            if ($invoice->lease?->tenant) {
-                $invoice->lease->tenant->notify(new InvoiceOverdueNotification($invoice, 'tenant'));
+            // Notify Renter
+            if ($invoice->lease?->renter) {
+                $invoice->lease->renter->notify(new InvoiceOverdueNotification($invoice, 'renter'));
             }
 
             // Notify Landlord (Property Owner)
@@ -56,15 +56,15 @@ class SendBillingAndLeaseReminders extends Command
         $this->info("Updated and notified {$overdueInvoices->count()} overdue invoices.");
 
         // 2. Notify about leases expiring in 30 days
-        $expiringLeases = Lease::with(['tenant', 'room.property.user'])
+        $expiringLeases = Lease::with(['renter', 'room.property.user'])
             ->where('status', 'active')
             ->whereDate('end_date', '=', now()->addDays(30)->toDateString())
             ->get();
 
         foreach ($expiringLeases as $lease) {
-            // Notify Tenant
-            if ($lease->tenant) {
-                $lease->tenant->notify(new LeaseExpiringNotification($lease, 'tenant'));
+            // Notify Renter
+            if ($lease->renter) {
+                $lease->renter->notify(new LeaseExpiringNotification($lease, 'renter'));
             }
 
             // Notify Landlord

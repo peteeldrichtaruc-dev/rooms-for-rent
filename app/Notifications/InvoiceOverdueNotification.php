@@ -18,14 +18,12 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
 
     /**
      * @param Invoice $invoice
-     * @param string $recipientType 'tenant' or 'landlord'
+     * @param string $recipientType 'renter' or 'landlord'
      */
     public function __construct(
         public Invoice $invoice,
-        public string  $recipientType = 'tenant'
-    )
-    {
-    }
+        public string  $recipientType = 'renter'
+    ) {}
 
     /**
      * Determine delivery channels based on recipient type and available contact info.
@@ -37,8 +35,8 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
     {
         $channels = ['mail'];
 
-        // Dispatch local SMS log notification for tenants with phone numbers
-        if ($this->recipientType === 'tenant') {
+        // Dispatch local SMS log notification for renters with phone numbers
+        if ($this->recipientType === 'renter') {
             $phoneNumber = method_exists($notifiable, 'routeNotificationForTwilio')
                 ? $notifiable->routeNotificationForTwilio()
                 : ($notifiable->phone ?? null);
@@ -53,7 +51,7 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Generate a 30-day signed payment link for public tenant access.
+     * Generate a 30-day signed payment link for public renter access.
      *
      * @return string
      */
@@ -77,27 +75,27 @@ class InvoiceOverdueNotification extends Notification implements ShouldQueue
         $dueDate = $this->invoice->due_date ? $this->invoice->due_date->format('F j, Y') : 'N/A';
 
         if ($this->recipientType === 'landlord') {
-            $tenantName = $this->invoice->lease?->tenant?->first_name
-                ? "{$this->invoice->lease->tenant->first_name} {$this->invoice->lease->tenant->last_name}"
-                : 'a tenant';
+            $renterName = $this->invoice->lease?->renter?->first_name
+                ? "{$this->invoice->lease->renter->first_name} {$this->invoice->lease->renter->last_name}"
+                : 'a renter';
 
             return (new MailMessage)
                 ->subject("Overdue Payment Alert: Room {$roomNumber}")
                 ->greeting("Hello {$notifiable->name},")
-                ->line("Invoice #{$this->invoice->id} for Room {$roomNumber} (Tenant: {$tenantName}) is now marked as **OVERDUE**.")
+                ->line("Invoice #{$this->invoice->id} for Room {$roomNumber} (Renter: {$renterName}) is now marked as **OVERDUE**.")
                 ->line("Amount Due: ₱{$formattedAmount}")
                 ->line("Original Due Date: {$dueDate}")
                 ->action('View Invoice Details', url("/invoices/{$this->invoice->id}"))
                 ->line('Please review the invoice on your dashboard.');
         }
 
-        // Tenant Notification with Signed Payment URL
-        $tenantName = $this->invoice->lease?->tenant?->first_name ?? 'Valued Tenant';
+        // Renter Notification with Signed Payment URL
+        $renterName = $this->invoice->lease?->renter?->first_name ?? 'Valued Renter';
         $paymentUrl = $this->getSignedPaymentUrl();
 
         return (new MailMessage)
             ->subject("OVERDUE NOTICE: Invoice #{$this->invoice->id} for Room {$roomNumber}")
-            ->greeting("Hello {$tenantName},")
+            ->greeting("Hello {$renterName},")
             ->line("Your rent invoice for Room {$roomNumber} was due on **{$dueDate}** and is now overdue.")
             ->line("Outstanding Balance: ₱{$formattedAmount}")
             ->action('Pay Online Now', $paymentUrl)

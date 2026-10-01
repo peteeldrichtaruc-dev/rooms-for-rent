@@ -20,7 +20,7 @@ class LeasePolicy
      */
     public function view(User $user, Lease $lease): bool
     {
-        return $user->id === $lease->room->property->user_id || $user->id === $lease->tenant_id;
+        return $user->id === $lease->room->property->user_id || $user->id === $lease->renter_id;
     }
 
     /**

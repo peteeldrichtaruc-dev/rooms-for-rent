@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -13,11 +13,11 @@ use Illuminate\Notifications\Notifiable;
  * Class User
  *
  * Represents an authenticated user (landlord or property manager) who owns
- * properties, rooms, tenants, and lease agreements.
+ * properties, rooms, renters, and lease agreements.
  *
  * @package App\Models
  */
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -76,23 +76,23 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all tenants managed by the user.
+     * Get all renters managed by the user.
      *
      * @return HasMany
      */
-    public function tenants(): HasMany
+    public function renters(): HasMany
     {
-        return $this->hasMany(Tenant::class);
+        return $this->hasMany(Renter::class);
     }
 
     /**
-     * Get all leases created by or belonging to the user's tenants.
+     * Get all leases created by or belonging to the user's renters.
      *
      * @return HasManyThrough
      */
     public function leases(): HasManyThrough
     {
-        return $this->hasManyThrough(Lease::class, Tenant::class);
+        return $this->hasManyThrough(Lease::class, Renter::class);
     }
 
     /**

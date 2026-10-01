@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Tenant;
+use App\Models\Renter;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class TenantSeeder extends Seeder
+class RenterSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,8 +19,8 @@ class TenantSeeder extends Seeder
             'email' => 'admin@example.com',
         ]);
 
-        // Seed 50 tenants attached to the landlord user
-        Tenant::factory()
+        // Seed 50 renters attached to the landlord user
+        Renter::factory()
             ->count(50)
             ->create([
                 'user_id' => $user->id,
