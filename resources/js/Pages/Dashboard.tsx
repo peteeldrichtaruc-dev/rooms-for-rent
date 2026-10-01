@@ -224,7 +224,7 @@ export default function Dashboard({
 
                 {/* Lower Layout: Activity Feed & Quick Management */}
                 <div
-                    className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+                    className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start"
                     data-aos="fade-up"
                     data-aos-delay="100"
                 >
@@ -286,7 +286,7 @@ export default function Dashboard({
                     </div>
 
                     {/* Quick Management Shortcuts (1 column on large screens) */}
-                    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-5 flex flex-col justify-between">
+                    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-5 h-fit">
                         <div>
                             <h2 className="text-base font-extrabold text-slate-900">
                                 Quick Management
@@ -297,7 +297,7 @@ export default function Dashboard({
                             </p>
                         </div>
 
-                        <div className="space-y-3 my-auto">
+                        <div className="space-y-3">
                             <Link
                                 href={route("properties.create")}
                                 className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-sm"
